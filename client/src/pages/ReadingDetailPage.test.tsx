@@ -13,6 +13,8 @@ vi.mock('../app/api', async () => {
     useGetReadingQuery: vi.fn(),
     useGetReadingStatsQuery: vi.fn(),
     useCreateAnnotationMutation: vi.fn(),
+    useUpdateAnnotationMutation: vi.fn(),
+    useDeleteAnnotationMutation: vi.fn(),
   };
 });
 
@@ -93,11 +95,21 @@ const mockStats = {
 };
 
 const mockCreateAnnotation = vi.fn();
+const mockUpdateAnnotation = vi.fn();
+const mockDeleteAnnotation = vi.fn();
 
 beforeEach(() => {
   vi.resetAllMocks();
   vi.mocked(apiModule.useCreateAnnotationMutation).mockReturnValue([
     mockCreateAnnotation,
+    { isLoading: false, reset: vi.fn() } as any,
+  ]);
+  vi.mocked(apiModule.useUpdateAnnotationMutation).mockReturnValue([
+    mockUpdateAnnotation,
+    { isLoading: false, reset: vi.fn() } as any,
+  ]);
+  vi.mocked(apiModule.useDeleteAnnotationMutation).mockReturnValue([
+    mockDeleteAnnotation,
     { isLoading: false, reset: vi.fn() } as any,
   ]);
   vi.mocked(apiModule.useGetReadingStatsQuery).mockReturnValue({
@@ -107,7 +119,9 @@ beforeEach(() => {
   } as any);
 });
 
-function renderDetailPage(currentUser: typeof mockInstructor | typeof mockStudent) {
+function renderDetailPage(
+  currentUser: typeof mockInstructor | typeof mockStudent | typeof mockStudent2,
+) {
   return renderWithProviders(
     <Routes>
       <Route path="/readings/:id" element={<ReadingDetailPage />} />
@@ -359,5 +373,145 @@ describe('ReadingDetailPage', () => {
     await user.selectOptions(screen.getByRole('combobox'), 'stu-1');
     expect(screen.getByText('Great reading!')).toBeInTheDocument();
     expect(screen.queryByText('No annotations from this student.')).not.toBeInTheDocument();
+  });
+
+  it('shows edit and delete buttons only on own annotations', () => {
+    vi.mocked(apiModule.useGetReadingQuery).mockReturnValue({
+      data: mockReadingMultipleAuthors,
+      isLoading: false,
+      error: undefined,
+    } as any);
+
+    renderDetailPage(mockStudent);
+
+    const editButtons = screen.getAllByText('Edit');
+    const deleteButtons = screen.getAllByText('Delete');
+    // mockStudent (stu-1) has 2 annotations in mockReadingMultipleAuthors
+    expect(editButtons).toHaveLength(2);
+    expect(deleteButtons).toHaveLength(2);
+  });
+
+  it('hides edit and delete buttons for other students annotations', () => {
+    vi.mocked(apiModule.useGetReadingQuery).mockReturnValue({
+      data: mockReading,
+      isLoading: false,
+      error: undefined,
+    } as any);
+
+    renderDetailPage(mockStudent2);
+
+    expect(screen.queryByText('Edit')).not.toBeInTheDocument();
+    expect(screen.queryByText('Delete')).not.toBeInTheDocument();
+  });
+
+  it('enters edit mode and saves', async () => {
+    mockUpdateAnnotation.mockReturnValue({ unwrap: () => Promise.resolve({}) });
+
+    vi.mocked(apiModule.useGetReadingQuery).mockReturnValue({
+      data: mockReading,
+      isLoading: false,
+      error: undefined,
+    } as any);
+
+    const user = userEvent.setup();
+    renderDetailPage(mockStudent);
+
+    await user.click(screen.getByText('Edit'));
+
+    expect(screen.getByDisplayValue('Great reading!')).toBeInTheDocument();
+    expect(screen.getByText('Save')).toBeInTheDocument();
+    expect(screen.getByText('Cancel')).toBeInTheDocument();
+
+    const editTextarea = screen.getByDisplayValue('Great reading!');
+    await user.clear(editTextarea);
+    await user.type(editTextarea, 'Updated comment');
+    await user.click(screen.getByText('Save'));
+
+    expect(mockUpdateAnnotation).toHaveBeenCalledWith({
+      id: 'a1',
+      content: 'Updated comment',
+      authorId: 'stu-1',
+      readingId: 'r1',
+    });
+  });
+
+  it('cancels edit mode without saving', async () => {
+    vi.mocked(apiModule.useGetReadingQuery).mockReturnValue({
+      data: mockReading,
+      isLoading: false,
+      error: undefined,
+    } as any);
+
+    const user = userEvent.setup();
+    renderDetailPage(mockStudent);
+
+    await user.click(screen.getByText('Edit'));
+    const editTextarea = screen.getByDisplayValue('Great reading!');
+    await user.clear(editTextarea);
+    await user.type(editTextarea, 'Changed text');
+    await user.click(screen.getByText('Cancel'));
+
+    expect(screen.getByText('Great reading!')).toBeInTheDocument();
+    expect(screen.queryByText('Save')).not.toBeInTheDocument();
+    expect(mockUpdateAnnotation).not.toHaveBeenCalled();
+  });
+
+  it('shows delete confirmation and deletes', async () => {
+    mockDeleteAnnotation.mockReturnValue({ unwrap: () => Promise.resolve({}) });
+
+    vi.mocked(apiModule.useGetReadingQuery).mockReturnValue({
+      data: mockReading,
+      isLoading: false,
+      error: undefined,
+    } as any);
+
+    const user = userEvent.setup();
+    renderDetailPage(mockStudent);
+
+    await user.click(screen.getByText('Delete'));
+
+    expect(screen.getByText('Delete?')).toBeInTheDocument();
+    expect(screen.getByText('Yes')).toBeInTheDocument();
+    expect(screen.getByText('No')).toBeInTheDocument();
+
+    await user.click(screen.getByText('Yes'));
+
+    expect(mockDeleteAnnotation).toHaveBeenCalledWith({
+      id: 'a1',
+      authorId: 'stu-1',
+      readingId: 'r1',
+    });
+  });
+
+  it('cancels delete confirmation', async () => {
+    vi.mocked(apiModule.useGetReadingQuery).mockReturnValue({
+      data: mockReading,
+      isLoading: false,
+      error: undefined,
+    } as any);
+
+    const user = userEvent.setup();
+    renderDetailPage(mockStudent);
+
+    await user.click(screen.getByText('Delete'));
+    expect(screen.getByText('Delete?')).toBeInTheDocument();
+
+    await user.click(screen.getByText('No'));
+    expect(screen.queryByText('Delete?')).not.toBeInTheDocument();
+    expect(screen.getByText('Edit')).toBeInTheDocument();
+    expect(mockDeleteAnnotation).not.toHaveBeenCalled();
+  });
+
+  it('hides edit/delete for instructors viewing annotations', () => {
+    vi.mocked(apiModule.useGetReadingQuery).mockReturnValue({
+      data: mockReading,
+      isLoading: false,
+      error: undefined,
+    } as any);
+
+    renderDetailPage(mockInstructor);
+
+    expect(screen.queryByText('Edit')).not.toBeInTheDocument();
+    expect(screen.queryByText('Delete')).not.toBeInTheDocument();
   });
 });

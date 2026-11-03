@@ -6,6 +6,9 @@ import {
   useGetReadingQuery,
   useGetReadingStatsQuery,
   useCreateAnnotationMutation,
+  useUpdateAnnotationMutation,
+  useDeleteAnnotationMutation,
+  type Annotation,
 } from '../app/api';
 
 const StyledBackLink = styled(Link)`
@@ -172,6 +175,91 @@ const StyledAnnotationContent = styled.p`
   line-height: 1.6;
 `;
 
+const StyledAnnotationActions = styled.div`
+  display: flex;
+  gap: ${({ theme }) => theme.spacing.sm};
+  margin-top: ${({ theme }) => theme.spacing.xs};
+`;
+
+const StyledActionButton = styled.button`
+  background: none;
+  border: none;
+  padding: 0;
+  font-size: ${({ theme }) => theme.fontSize.xs};
+  color: ${({ theme }) => theme.colors.textMuted};
+  cursor: pointer;
+
+  &:hover {
+    color: ${({ theme }) => theme.colors.primary};
+  }
+`;
+
+const StyledDeleteButton = styled(StyledActionButton)`
+  &:hover {
+    color: ${({ theme }) => theme.colors.error};
+  }
+`;
+
+const StyledEditForm = styled.form`
+  display: flex;
+  flex-direction: column;
+  gap: ${({ theme }) => theme.spacing.sm};
+`;
+
+const StyledEditInput = styled.textarea`
+  padding: ${({ theme }) => theme.spacing.sm};
+  border: 1px solid ${({ theme }) => theme.colors.borderFocus};
+  border-radius: ${({ theme }) => theme.borderRadius.md};
+  font-size: ${({ theme }) => theme.fontSize.base};
+  font-family: inherit;
+  min-height: 60px;
+  resize: vertical;
+
+  &:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px ${({ theme }) => theme.colors.primaryLight};
+  }
+`;
+
+const StyledEditActions = styled.div`
+  display: flex;
+  gap: ${({ theme }) => theme.spacing.sm};
+  justify-content: flex-end;
+`;
+
+const StyledCancelButton = styled.button`
+  background: none;
+  border: 1px solid ${({ theme }) => theme.colors.border};
+  border-radius: ${({ theme }) => theme.borderRadius.md};
+  padding: ${({ theme }) => theme.spacing.xs} ${({ theme }) => theme.spacing.md};
+  font-size: ${({ theme }) => theme.fontSize.sm};
+  cursor: pointer;
+  color: ${({ theme }) => theme.colors.textSecondary};
+
+  &:hover {
+    background: ${({ theme }) => theme.colors.background};
+  }
+`;
+
+const StyledSaveButton = styled.button`
+  background: ${({ theme }) => theme.colors.primary};
+  color: white;
+  border: none;
+  border-radius: ${({ theme }) => theme.borderRadius.md};
+  padding: ${({ theme }) => theme.spacing.xs} ${({ theme }) => theme.spacing.md};
+  font-size: ${({ theme }) => theme.fontSize.sm};
+  cursor: pointer;
+
+  &:hover {
+    background: ${({ theme }) => theme.colors.primaryHover};
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+`;
+
 const StyledEmptyAnnotations = styled.div`
   text-align: center;
   padding: ${({ theme }) => theme.spacing.xl};
@@ -186,6 +274,107 @@ const StyledErrorMessage = styled.p`
   font-size: ${({ theme }) => theme.fontSize.sm};
   margin-bottom: ${({ theme }) => theme.spacing.sm};
 `;
+
+function AnnotationCard({
+  annotation,
+  isOwner,
+  readingId,
+}: {
+  annotation: Annotation;
+  isOwner: boolean;
+  readingId: string;
+}) {
+  const [isEditing, setIsEditing] = useState(false);
+  const [editContent, setEditContent] = useState(annotation.content);
+  const [confirmDelete, setConfirmDelete] = useState(false);
+  const [updateAnnotation, { isLoading: isSaving }] = useUpdateAnnotationMutation();
+  const [deleteAnnotation, { isLoading: isDeleting }] = useDeleteAnnotationMutation();
+
+  const handleSave = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editContent.trim()) return;
+    try {
+      await updateAnnotation({
+        id: annotation.id,
+        content: editContent.trim(),
+        authorId: annotation.authorId,
+        readingId,
+      }).unwrap();
+      setIsEditing(false);
+    } catch {
+      // RTK Query will refetch on failure, keep edit mode open
+    }
+  };
+
+  const handleDelete = async () => {
+    try {
+      await deleteAnnotation({
+        id: annotation.id,
+        authorId: annotation.authorId,
+        readingId,
+      }).unwrap();
+    } catch {
+      setConfirmDelete(false);
+    }
+  };
+
+  return (
+    <StyledAnnotationCard>
+      <StyledAnnotationHeader>
+        <StyledAnnotationAuthor>{annotation.author.name}</StyledAnnotationAuthor>
+        <StyledAnnotationTime>
+          {new Date(annotation.createdAt).toLocaleString()}
+        </StyledAnnotationTime>
+      </StyledAnnotationHeader>
+
+      {isEditing ? (
+        <StyledEditForm onSubmit={handleSave}>
+          <StyledEditInput value={editContent} onChange={(e) => setEditContent(e.target.value)} />
+          <StyledEditActions>
+            <StyledCancelButton
+              type="button"
+              onClick={() => {
+                setIsEditing(false);
+                setEditContent(annotation.content);
+              }}
+            >
+              Cancel
+            </StyledCancelButton>
+            <StyledSaveButton type="submit" disabled={isSaving || !editContent.trim()}>
+              {isSaving ? 'Saving...' : 'Save'}
+            </StyledSaveButton>
+          </StyledEditActions>
+        </StyledEditForm>
+      ) : (
+        <>
+          <StyledAnnotationContent>{annotation.content}</StyledAnnotationContent>
+          {isOwner && (
+            <StyledAnnotationActions>
+              {confirmDelete ? (
+                <>
+                  <span style={{ fontSize: '0.75rem', color: '#6B7280' }}>Delete?</span>
+                  <StyledDeleteButton onClick={handleDelete} disabled={isDeleting}>
+                    {isDeleting ? 'Deleting...' : 'Yes'}
+                  </StyledDeleteButton>
+                  <StyledActionButton onClick={() => setConfirmDelete(false)}>
+                    No
+                  </StyledActionButton>
+                </>
+              ) : (
+                <>
+                  <StyledActionButton onClick={() => setIsEditing(true)}>Edit</StyledActionButton>
+                  <StyledDeleteButton onClick={() => setConfirmDelete(true)}>
+                    Delete
+                  </StyledDeleteButton>
+                </>
+              )}
+            </StyledAnnotationActions>
+          )}
+        </>
+      )}
+    </StyledAnnotationCard>
+  );
+}
 
 export default function ReadingDetailPage() {
   const { id } = useParams<{ id: string }>();
@@ -318,15 +507,12 @@ export default function ReadingDetailPage() {
           </StyledEmptyAnnotations>
         ) : (
           filteredAnnotations.map((annotation) => (
-            <StyledAnnotationCard key={annotation.id}>
-              <StyledAnnotationHeader>
-                <StyledAnnotationAuthor>{annotation.author.name}</StyledAnnotationAuthor>
-                <StyledAnnotationTime>
-                  {new Date(annotation.createdAt).toLocaleString()}
-                </StyledAnnotationTime>
-              </StyledAnnotationHeader>
-              <StyledAnnotationContent>{annotation.content}</StyledAnnotationContent>
-            </StyledAnnotationCard>
+            <AnnotationCard
+              key={annotation.id}
+              annotation={annotation}
+              isOwner={currentUser?.id === annotation.authorId}
+              readingId={id!}
+            />
           ))
         )}
       </StyledAnnotationsSection>

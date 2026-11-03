@@ -1,6 +1,6 @@
 import { Router, type Request, type Response } from 'express';
 import { prisma } from '../data';
-import type { Annotation, ApiError, CreateAnnotationBody } from '../types';
+import type { Annotation, ApiError, CreateAnnotationBody, UpdateAnnotationBody } from '../types';
 
 export const annotationsRouter = Router();
 
@@ -32,5 +32,70 @@ annotationsRouter.post(
     });
 
     res.status(201).json(annotation);
+  },
+);
+
+annotationsRouter.patch(
+  '/:id',
+  async (
+    req: Request<{ id: string }, Annotation | ApiError, UpdateAnnotationBody>,
+    res: Response<Annotation | ApiError>,
+  ) => {
+    const { content, authorId } = req.body;
+
+    if (!content?.trim()) {
+      res.status(400).json({ error: 'Annotation content cannot be empty' });
+      return;
+    }
+
+    const existing = await prisma.annotation.findUnique({
+      where: { id: req.params.id },
+    });
+
+    if (!existing) {
+      res.status(404).json({ error: 'Annotation not found' });
+      return;
+    }
+
+    if (existing.authorId !== authorId) {
+      res.status(403).json({ error: 'You can only edit your own annotations' });
+      return;
+    }
+
+    const updated = await prisma.annotation.update({
+      where: { id: req.params.id },
+      data: { content: content.trim() },
+      include: { author: true },
+    });
+
+    res.json(updated);
+  },
+);
+
+annotationsRouter.delete(
+  '/:id',
+  async (
+    req: Request<{ id: string }, { success: true } | ApiError, { authorId: string }>,
+    res: Response<{ success: true } | ApiError>,
+  ) => {
+    const { authorId } = req.body;
+
+    const existing = await prisma.annotation.findUnique({
+      where: { id: req.params.id },
+    });
+
+    if (!existing) {
+      res.status(404).json({ error: 'Annotation not found' });
+      return;
+    }
+
+    if (existing.authorId !== authorId) {
+      res.status(403).json({ error: 'You can only delete your own annotations' });
+      return;
+    }
+
+    await prisma.annotation.delete({ where: { id: req.params.id } });
+
+    res.json({ success: true });
   },
 );

@@ -30,6 +30,11 @@ export interface CreateAnnotationBody {
   authorId: string;
 }
 
+export interface UpdateAnnotationBody {
+  content: string;
+  authorId: string;
+}
+
 // --- Response Bodies ---
 
 export interface ReadingListItem {

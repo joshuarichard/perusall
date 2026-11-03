@@ -195,3 +195,77 @@ Create an annotation on a reading. Intended for students.
 ```json
 { "error": "readingId and authorId are required" }
 ```
+
+### PATCH /api/annotations/:id
+
+Update an annotation's content. Only the original author can edit.
+
+**Request Body**
+
+| Field      | Type   | Required | Notes                      |
+| ---------- | ------ | -------- | -------------------------- |
+| `content`  | string | yes      | Trimmed; must be non-empty |
+| `authorId` | string | yes      | Must match original author |
+
+```json
+{
+  "content": "Updated comment",
+  "authorId": "user-uuid"
+}
+```
+
+**Response** `200 OK`
+
+Returns the updated annotation with author (same shape as POST response).
+
+**Response** `400 Bad Request`
+
+```json
+{ "error": "Annotation content cannot be empty" }
+```
+
+**Response** `403 Forbidden`
+
+```json
+{ "error": "You can only edit your own annotations" }
+```
+
+**Response** `404 Not Found`
+
+```json
+{ "error": "Annotation not found" }
+```
+
+### DELETE /api/annotations/:id
+
+Delete an annotation. Only the original author can delete.
+
+**Request Body**
+
+| Field      | Type   | Required | Notes                      |
+| ---------- | ------ | -------- | -------------------------- |
+| `authorId` | string | yes      | Must match original author |
+
+```json
+{
+  "authorId": "user-uuid"
+}
+```
+
+**Response** `200 OK`
+
+```json
+{ "success": true }
+```
+
+**Response** `403 Forbidden`
+
+```json
+{ "error": "You can only delete your own annotations" }
+```
+
+**Response** `404 Not Found`
+
+```json
+{ "error": "Annotation not found" }
+```

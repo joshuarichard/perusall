@@ -83,7 +83,35 @@ export const api = createApi({
       { content: string; readingId: string; authorId: string }
     >({
       query: (body) => ({ url: '/annotations', method: 'POST', body }),
-      // Invalidate both the reading list (annotation count) and the detail view
+      invalidatesTags: (_result, _error, { readingId }) => [
+        'Reading',
+        { type: 'ReadingDetail', id: readingId },
+      ],
+    }),
+
+    updateAnnotation: builder.mutation<
+      Annotation,
+      { id: string; content: string; authorId: string; readingId: string }
+    >({
+      query: ({ id, content, authorId }) => ({
+        url: `/annotations/${id}`,
+        method: 'PATCH',
+        body: { content, authorId },
+      }),
+      invalidatesTags: (_result, _error, { readingId }) => [
+        { type: 'ReadingDetail', id: readingId },
+      ],
+    }),
+
+    deleteAnnotation: builder.mutation<
+      { success: true },
+      { id: string; authorId: string; readingId: string }
+    >({
+      query: ({ id, authorId }) => ({
+        url: `/annotations/${id}`,
+        method: 'DELETE',
+        body: { authorId },
+      }),
       invalidatesTags: (_result, _error, { readingId }) => [
         'Reading',
         { type: 'ReadingDetail', id: readingId },
@@ -99,4 +127,6 @@ export const {
   useGetReadingStatsQuery,
   useCreateReadingMutation,
   useCreateAnnotationMutation,
+  useUpdateAnnotationMutation,
+  useDeleteAnnotationMutation,
 } = api;
