@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import styled from 'styled-components';
 import { useParams, Link } from 'react-router-dom';
 import { useAppSelector } from '../app/hooks';
@@ -71,9 +71,30 @@ const StyledAnnotationsSection = styled.div`
   margin-top: ${({ theme }) => theme.spacing.lg};
 `;
 
+const StyledSectionHeader = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: ${({ theme }) => theme.spacing.md};
+`;
+
 const StyledSectionTitle = styled.h2`
   font-size: ${({ theme }) => theme.fontSize.lg};
-  margin-bottom: ${({ theme }) => theme.spacing.md};
+`;
+
+const StyledFilterSelect = styled.select`
+  padding: ${({ theme }) => theme.spacing.xs} ${({ theme }) => theme.spacing.sm};
+  border: 1px solid ${({ theme }) => theme.colors.border};
+  border-radius: ${({ theme }) => theme.borderRadius.md};
+  font-size: ${({ theme }) => theme.fontSize.sm};
+  color: ${({ theme }) => theme.colors.text};
+  background: ${({ theme }) => theme.colors.surface};
+  cursor: pointer;
+
+  &:focus {
+    outline: none;
+    border-color: ${({ theme }) => theme.colors.borderFocus};
+  }
 `;
 
 const StyledAnnotationForm = styled.form`
@@ -175,9 +196,27 @@ export default function ReadingDetailPage() {
 
   const [content, setContent] = useState('');
   const [formError, setFormError] = useState('');
+  const [filterAuthorId, setFilterAuthorId] = useState('');
 
   const isStudent = currentUser?.role === 'student';
   const isInstructor = currentUser?.role === 'instructor';
+
+  const uniqueAuthors = useMemo(() => {
+    if (!reading) return [];
+    const seen = new Map<string, string>();
+    for (const a of reading.annotations) {
+      if (!seen.has(a.author.id)) seen.set(a.author.id, a.author.name);
+    }
+    return Array.from(seen, ([id, name]) => ({ id, name })).sort((a, b) =>
+      a.name.localeCompare(b.name),
+    );
+  }, [reading]);
+
+  const filteredAnnotations = useMemo(() => {
+    if (!reading) return [];
+    if (!filterAuthorId) return reading.annotations;
+    return reading.annotations.filter((a) => a.author.id === filterAuthorId);
+  }, [reading, filterAuthorId]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -230,7 +269,25 @@ export default function ReadingDetailPage() {
       )}
 
       <StyledAnnotationsSection>
-        <StyledSectionTitle>Discussion ({reading.annotations.length})</StyledSectionTitle>
+        <StyledSectionHeader>
+          <StyledSectionTitle>
+            Discussion ({filteredAnnotations.length}
+            {filterAuthorId && ` of ${reading.annotations.length}`})
+          </StyledSectionTitle>
+          {reading.annotations.length > 0 && (
+            <StyledFilterSelect
+              value={filterAuthorId}
+              onChange={(e) => setFilterAuthorId(e.target.value)}
+            >
+              <option value="">All students</option>
+              {uniqueAuthors.map((author) => (
+                <option key={author.id} value={author.id}>
+                  {author.name}
+                </option>
+              ))}
+            </StyledFilterSelect>
+          )}
+        </StyledSectionHeader>
 
         {isStudent && (
           <>
@@ -248,13 +305,19 @@ export default function ReadingDetailPage() {
           </>
         )}
 
-        {reading.annotations.length === 0 ? (
+        {filteredAnnotations.length === 0 ? (
           <StyledEmptyAnnotations>
-            <p>No annotations yet.</p>
-            {isStudent && <p>Be the first to share your thoughts!</p>}
+            {reading.annotations.length === 0 ? (
+              <>
+                <p>No annotations yet.</p>
+                {isStudent && <p>Be the first to share your thoughts!</p>}
+              </>
+            ) : (
+              <p>No annotations from this student.</p>
+            )}
           </StyledEmptyAnnotations>
         ) : (
-          reading.annotations.map((annotation) => (
+          filteredAnnotations.map((annotation) => (
             <StyledAnnotationCard key={annotation.id}>
               <StyledAnnotationHeader>
                 <StyledAnnotationAuthor>{annotation.author.name}</StyledAnnotationAuthor>

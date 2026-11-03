@@ -7,10 +7,10 @@
     "dev": "tsx watch src/index.ts",
     "build": "tsc",
     "start": "node dist/index.js",
-    "seed": "tsx src/seed.ts",
+    "seed": "tsx src/data/seed.ts",
     "db:migrate": "prisma migrate dev",
-    "db:setup": "prisma migrate dev && tsx src/seed.ts",
-    "db:reset": "prisma migrate reset --force && tsx src/seed.ts",
+    "db:setup": "prisma migrate dev && tsx src/data/seed.ts",
+    "db:reset": "prisma migrate reset --force && tsx src/data/seed.ts",
     "test": "vitest run"
   },
   "dependencies": {

@@ -54,51 +54,153 @@ async function seed() {
   });
 
   // Create annotations
-  await prisma.annotation.createMany({
-    data: [
-      {
-        content: "What's the difference between supervised and unsupervised learning?",
-        readingId: mlReading.id,
-        authorId: sarah.id,
-      },
-      {
-        content:
-          'Supervised learning uses labeled data to train models, while unsupervised learning identifies patterns in unlabeled data. Think of it like learning with a teacher vs. exploring on your own.',
-        readingId: mlReading.id,
-        authorId: michael.id,
-      },
-      {
-        content:
-          'The reinforcement learning section reminds me of how game AI works. Is AlphaGo an example of this?',
-        readingId: mlReading.id,
-        authorId: alex.id,
-      },
-      {
-        content:
-          "Hamlet's indecision in the soliloquy mirrors the paralysis of overthinking. Is Shakespeare commenting on intellectualism itself?",
-        readingId: shakespeareReading.id,
-        authorId: sarah.id,
-      },
-      {
-        content:
-          "The play-within-a-play is such a clever narrative device. It's essentially Hamlet running an experiment to test his hypothesis about Claudius.",
-        readingId: shakespeareReading.id,
-        authorId: alex.id,
-      },
-      {
-        content:
-          'The feedback loop between ocean temperature and CO2 absorption is alarming. Are there any proposed interventions that could break this cycle?',
-        readingId: climateReading.id,
-        authorId: michael.id,
-      },
-    ],
-  });
+  const annotations = [
+    // ML Reading — discussions over Oct 20-22
+    {
+      content: "What's the difference between supervised and unsupervised learning?",
+      readingId: mlReading.id,
+      authorId: sarah.id,
+      createdAt: new Date('2026-10-20T09:15:00Z'),
+    },
+    {
+      content:
+        'Supervised learning uses labeled data to train models, while unsupervised learning identifies patterns in unlabeled data. Think of it like learning with a teacher vs. exploring on your own.',
+      readingId: mlReading.id,
+      authorId: michael.id,
+      createdAt: new Date('2026-10-20T10:42:00Z'),
+    },
+    {
+      content:
+        'The reinforcement learning section reminds me of how game AI works. Is AlphaGo an example of this?',
+      readingId: mlReading.id,
+      authorId: alex.id,
+      createdAt: new Date('2026-10-20T14:03:00Z'),
+    },
+    {
+      content:
+        'Yes, AlphaGo is a great example! It learned by playing millions of games against itself. The reward signal was simply winning or losing.',
+      readingId: mlReading.id,
+      authorId: michael.id,
+      createdAt: new Date('2026-10-20T16:28:00Z'),
+    },
+    {
+      content:
+        'The bias-variance tradeoff section was really helpful. I finally understand why more complex models can actually perform worse on new data.',
+      readingId: mlReading.id,
+      authorId: sarah.id,
+      createdAt: new Date('2026-10-21T08:55:00Z'),
+    },
+    {
+      content:
+        'Can someone explain gradient descent in simpler terms? The math notation lost me around page 12.',
+      readingId: mlReading.id,
+      authorId: alex.id,
+      createdAt: new Date('2026-10-21T20:10:00Z'),
+    },
+    {
+      content:
+        "Think of it like rolling a ball downhill — you're trying to find the lowest point (minimum error) by taking steps proportional to the slope.",
+      readingId: mlReading.id,
+      authorId: sarah.id,
+      createdAt: new Date('2026-10-22T11:30:00Z'),
+    },
+    // Shakespeare Reading — discussions over Oct 23-26
+    {
+      content:
+        "Hamlet's indecision in the soliloquy mirrors the paralysis of overthinking. Is Shakespeare commenting on intellectualism itself?",
+      readingId: shakespeareReading.id,
+      authorId: sarah.id,
+      createdAt: new Date('2026-10-23T13:20:00Z'),
+    },
+    {
+      content:
+        "The play-within-a-play is such a clever narrative device. It's essentially Hamlet running an experiment to test his hypothesis about Claudius.",
+      readingId: shakespeareReading.id,
+      authorId: alex.id,
+      createdAt: new Date('2026-10-23T15:45:00Z'),
+    },
+    {
+      content:
+        "I think the 'To be or not to be' speech is less about suicide and more about whether it's worth taking action against injustice when the outcome is uncertain.",
+      readingId: shakespeareReading.id,
+      authorId: michael.id,
+      createdAt: new Date('2026-10-24T09:05:00Z'),
+    },
+    {
+      content:
+        "The closet scene with Gertrude is fascinating — Hamlet finally acts impulsively (killing Polonius) and it's arguably his worst decision in the entire play.",
+      readingId: shakespeareReading.id,
+      authorId: sarah.id,
+      createdAt: new Date('2026-10-24T17:30:00Z'),
+    },
+    {
+      content:
+        "Interesting how Claudius's reaction to the play confirms his guilt but Hamlet still delays. Is this Shakespeare showing that proof alone doesn't drive action?",
+      readingId: shakespeareReading.id,
+      authorId: alex.id,
+      createdAt: new Date('2026-10-25T10:15:00Z'),
+    },
+    {
+      content:
+        "The contrast between Hamlet's inaction and Laertes' impulsive revenge later in the play really highlights Shakespeare's exploration of different responses to grief.",
+      readingId: shakespeareReading.id,
+      authorId: michael.id,
+      createdAt: new Date('2026-10-26T14:50:00Z'),
+    },
+    // Climate Reading — discussions over Oct 28-31
+    {
+      content:
+        'The feedback loop between ocean temperature and CO2 absorption is alarming. Are there any proposed interventions that could break this cycle?',
+      readingId: climateReading.id,
+      authorId: michael.id,
+      createdAt: new Date('2026-10-28T11:00:00Z'),
+    },
+    {
+      content:
+        'The section on permafrost thawing was eye-opening. The methane release creates yet another feedback loop that the models are still struggling to quantify.',
+      readingId: climateReading.id,
+      authorId: sarah.id,
+      createdAt: new Date('2026-10-28T14:22:00Z'),
+    },
+    {
+      content:
+        "I'm surprised by how much uncertainty there is in the sea level projections. The range between best and worst case is enormous.",
+      readingId: climateReading.id,
+      authorId: alex.id,
+      createdAt: new Date('2026-10-29T09:40:00Z'),
+    },
+    {
+      content:
+        'The paper mentions carbon capture technology but seems skeptical about scaling it. Has anyone read more recent literature on direct air capture costs?',
+      readingId: climateReading.id,
+      authorId: michael.id,
+      createdAt: new Date('2026-10-29T16:15:00Z'),
+    },
+    {
+      content:
+        'Figure 4 showing coral reef decline projections is devastating. The 1.5°C vs 2°C difference means losing 70% vs 99% of reefs.',
+      readingId: climateReading.id,
+      authorId: sarah.id,
+      createdAt: new Date('2026-10-30T10:05:00Z'),
+    },
+    {
+      content:
+        "The economic modeling section felt underdeveloped compared to the physical science. It's hard to put a dollar value on ecosystem collapse.",
+      readingId: climateReading.id,
+      authorId: alex.id,
+      createdAt: new Date('2026-10-31T19:30:00Z'),
+    },
+  ];
+
+  for (const a of annotations) {
+    await prisma.annotation.create({ data: a });
+  }
 
   console.log('Database seeded successfully!');
   console.log(`  - ${2} instructors`);
   console.log(`  - ${3} students`);
   console.log(`  - ${3} readings`);
-  console.log(`  - ${6} annotations`);
+  console.log(`  - ${20} annotations`);
 }
 
 seed()
