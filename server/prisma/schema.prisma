@@ -1,0 +1,39 @@
+// Prisma schema for the Collaborative Reading App.
+// SQLite chosen for zero-config local development — reviewers just run `npm run db:setup`.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+model User {
+  id          String       @id @default(uuid())
+  name        String
+  role        String       // "instructor" or "student"
+  createdAt   DateTime     @default(now())
+  readings    Reading[]
+  annotations Annotation[]
+}
+
+model Reading {
+  id          String       @id @default(uuid())
+  title       String
+  description String
+  createdBy   String
+  createdAt   DateTime     @default(now())
+  creator     User         @relation(fields: [createdBy], references: [id])
+  annotations Annotation[]
+}
+
+model Annotation {
+  id        String   @id @default(uuid())
+  content   String
+  readingId String
+  authorId  String
+  createdAt DateTime @default(now())
+  reading   Reading  @relation(fields: [readingId], references: [id])
+  author    User     @relation(fields: [authorId], references: [id])
+}
