@@ -10,6 +10,15 @@ import {
   useDeleteAnnotationMutation,
   type Annotation,
 } from '../app/api';
+import {
+  StyledButton,
+  StyledCancelButton,
+  StyledActionButton,
+  StyledDeleteButton,
+} from '../components/Button';
+import { StyledErrorMessage } from '../components/FormElements';
+import { StyledEmptyStateCard } from '../components/EmptyState';
+import { StyledCard } from '../components/Card';
 
 const StyledBackLink = styled(Link)`
   display: inline-block;
@@ -22,10 +31,7 @@ const StyledBackLink = styled(Link)`
   }
 `;
 
-const StyledReadingHeader = styled.div`
-  background: ${({ theme }) => theme.colors.surface};
-  border: 1px solid ${({ theme }) => theme.colors.border};
-  border-radius: ${({ theme }) => theme.borderRadius.lg};
+const StyledReadingHeader = styled(StyledCard)`
   padding: ${({ theme }) => theme.spacing.xl};
   margin-bottom: ${({ theme }) => theme.spacing.xl};
 `;
@@ -113,6 +119,8 @@ const StyledAnnotationInput = styled.textarea`
   border-radius: ${({ theme }) => theme.borderRadius.md};
   font-size: ${({ theme }) => theme.fontSize.base};
   font-family: inherit;
+  background: ${({ theme }) => theme.colors.surface};
+  color: ${({ theme }) => theme.colors.text};
   min-height: 60px;
   resize: vertical;
 
@@ -123,26 +131,9 @@ const StyledAnnotationInput = styled.textarea`
   }
 `;
 
-const StyledSubmitButton = styled.button`
-  background: ${({ theme }) => theme.colors.primary};
-  color: white;
-  border: none;
-  border-radius: ${({ theme }) => theme.borderRadius.md};
+const StyledSubmitButton = styled(StyledButton)`
   padding: ${({ theme }) => theme.spacing.md} ${({ theme }) => theme.spacing.lg};
-  font-size: ${({ theme }) => theme.fontSize.sm};
-  font-weight: 500;
-  cursor: pointer;
   align-self: flex-end;
-  white-space: nowrap;
-
-  &:hover {
-    background: ${({ theme }) => theme.colors.primaryHover};
-  }
-
-  &:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
-  }
 `;
 
 const StyledAnnotationCard = styled.div`
@@ -181,25 +172,6 @@ const StyledAnnotationActions = styled.div`
   margin-top: ${({ theme }) => theme.spacing.xs};
 `;
 
-const StyledActionButton = styled.button`
-  background: none;
-  border: none;
-  padding: 0;
-  font-size: ${({ theme }) => theme.fontSize.xs};
-  color: ${({ theme }) => theme.colors.textMuted};
-  cursor: pointer;
-
-  &:hover {
-    color: ${({ theme }) => theme.colors.primary};
-  }
-`;
-
-const StyledDeleteButton = styled(StyledActionButton)`
-  &:hover {
-    color: ${({ theme }) => theme.colors.error};
-  }
-`;
-
 const StyledEditForm = styled.form`
   display: flex;
   flex-direction: column;
@@ -212,6 +184,8 @@ const StyledEditInput = styled.textarea`
   border-radius: ${({ theme }) => theme.borderRadius.md};
   font-size: ${({ theme }) => theme.fontSize.base};
   font-family: inherit;
+  background: ${({ theme }) => theme.colors.surface};
+  color: ${({ theme }) => theme.colors.text};
   min-height: 60px;
   resize: vertical;
 
@@ -227,52 +201,12 @@ const StyledEditActions = styled.div`
   justify-content: flex-end;
 `;
 
-const StyledCancelButton = styled.button`
-  background: none;
-  border: 1px solid ${({ theme }) => theme.colors.border};
-  border-radius: ${({ theme }) => theme.borderRadius.md};
+const StyledSaveButton = styled(StyledButton)`
   padding: ${({ theme }) => theme.spacing.xs} ${({ theme }) => theme.spacing.md};
-  font-size: ${({ theme }) => theme.fontSize.sm};
-  cursor: pointer;
-  color: ${({ theme }) => theme.colors.textSecondary};
-
-  &:hover {
-    background: ${({ theme }) => theme.colors.background};
-  }
 `;
 
-const StyledSaveButton = styled.button`
-  background: ${({ theme }) => theme.colors.primary};
-  color: white;
-  border: none;
-  border-radius: ${({ theme }) => theme.borderRadius.md};
+const StyledEditCancelButton = styled(StyledCancelButton)`
   padding: ${({ theme }) => theme.spacing.xs} ${({ theme }) => theme.spacing.md};
-  font-size: ${({ theme }) => theme.fontSize.sm};
-  cursor: pointer;
-
-  &:hover {
-    background: ${({ theme }) => theme.colors.primaryHover};
-  }
-
-  &:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
-  }
-`;
-
-const StyledEmptyAnnotations = styled.div`
-  text-align: center;
-  padding: ${({ theme }) => theme.spacing.xl};
-  color: ${({ theme }) => theme.colors.textMuted};
-  background: ${({ theme }) => theme.colors.surface};
-  border: 1px dashed ${({ theme }) => theme.colors.border};
-  border-radius: ${({ theme }) => theme.borderRadius.md};
-`;
-
-const StyledErrorMessage = styled.p`
-  color: ${({ theme }) => theme.colors.error};
-  font-size: ${({ theme }) => theme.fontSize.sm};
-  margin-bottom: ${({ theme }) => theme.spacing.sm};
 `;
 
 const StyledReplies = styled.div`
@@ -298,6 +232,8 @@ const StyledReplyInput = styled.textarea`
   border-radius: ${({ theme }) => theme.borderRadius.md};
   font-size: ${({ theme }) => theme.fontSize.sm};
   font-family: inherit;
+  background: ${({ theme }) => theme.colors.surface};
+  color: ${({ theme }) => theme.colors.text};
   min-height: 40px;
   resize: vertical;
 
@@ -315,25 +251,8 @@ const StyledReplyActions = styled.div`
   align-self: flex-end;
 `;
 
-const StyledReplySubmitButton = styled.button`
-  background: ${({ theme }) => theme.colors.primary};
-  color: white;
-  border: none;
-  border-radius: ${({ theme }) => theme.borderRadius.md};
+const StyledReplySubmitButton = styled(StyledButton)`
   padding: ${({ theme }) => theme.spacing.md} ${({ theme }) => theme.spacing.lg};
-  font-size: ${({ theme }) => theme.fontSize.sm};
-  font-weight: 500;
-  cursor: pointer;
-  white-space: nowrap;
-
-  &:hover {
-    background: ${({ theme }) => theme.colors.primaryHover};
-  }
-
-  &:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
-  }
 `;
 
 function AnnotationCard({
@@ -417,7 +336,7 @@ function AnnotationCard({
           <StyledEditForm onSubmit={handleSave}>
             <StyledEditInput value={editContent} onChange={(e) => setEditContent(e.target.value)} />
             <StyledEditActions>
-              <StyledCancelButton
+              <StyledEditCancelButton
                 type="button"
                 onClick={() => {
                   setIsEditing(false);
@@ -425,7 +344,7 @@ function AnnotationCard({
                 }}
               >
                 Cancel
-              </StyledCancelButton>
+              </StyledEditCancelButton>
               <StyledSaveButton type="submit" disabled={isSaving || !editContent.trim()}>
                 {isSaving ? 'Saving...' : 'Save'}
               </StyledSaveButton>
@@ -437,7 +356,7 @@ function AnnotationCard({
             <StyledAnnotationActions>
               {confirmDelete ? (
                 <>
-                  <span style={{ fontSize: '0.75rem', color: '#6B7280' }}>Delete?</span>
+                  <span style={{ fontSize: '0.75rem' }}>Delete?</span>
                   <StyledDeleteButton onClick={handleDelete} disabled={isDeleting}>
                     {isDeleting ? 'Deleting...' : 'Yes'}
                   </StyledDeleteButton>
@@ -652,7 +571,7 @@ export default function ReadingDetailPage() {
         )}
 
         {filteredAnnotations.length === 0 ? (
-          <StyledEmptyAnnotations>
+          <StyledEmptyStateCard>
             {reading.annotations.length === 0 ? (
               <>
                 <p>No annotations yet.</p>
@@ -661,7 +580,7 @@ export default function ReadingDetailPage() {
             ) : (
               <p>No annotations from this student.</p>
             )}
-          </StyledEmptyAnnotations>
+          </StyledEmptyStateCard>
         ) : (
           filteredAnnotations.map((annotation) => (
             <AnnotationCard

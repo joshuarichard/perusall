@@ -3,53 +3,16 @@ import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
 import { useAppSelector } from '../app/hooks';
 import { useGetReadingsQuery, useCreateReadingMutation } from '../app/api';
-
-const StyledPageHeader = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: ${({ theme }) => theme.spacing.xl};
-`;
-
-const StyledPageTitle = styled.h1`
-  font-size: ${({ theme }) => theme.fontSize.xxl};
-`;
-
-const StyledButton = styled.button`
-  background: ${({ theme }) => theme.colors.primary};
-  color: white;
-  border: none;
-  border-radius: ${({ theme }) => theme.borderRadius.md};
-  padding: ${({ theme }) => theme.spacing.sm} ${({ theme }) => theme.spacing.lg};
-  font-size: ${({ theme }) => theme.fontSize.sm};
-  font-weight: 500;
-  cursor: pointer;
-  transition: background 0.15s ease;
-
-  &:hover {
-    background: ${({ theme }) => theme.colors.primaryHover};
-  }
-
-  &:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
-  }
-`;
-
-const StyledReadingCard = styled.div`
-  background: ${({ theme }) => theme.colors.surface};
-  border: 1px solid ${({ theme }) => theme.colors.border};
-  border-radius: ${({ theme }) => theme.borderRadius.lg};
-  padding: ${({ theme }) => theme.spacing.lg};
-  margin-bottom: ${({ theme }) => theme.spacing.md};
-  cursor: pointer;
-  transition: all 0.15s ease;
-
-  &:hover {
-    border-color: ${({ theme }) => theme.colors.primary};
-    box-shadow: ${({ theme }) => theme.shadow.md};
-  }
-`;
+import { StyledButton, StyledCancelButton } from '../components/Button';
+import {
+  StyledInput,
+  StyledTextarea,
+  StyledFormActions,
+  StyledErrorMessage,
+} from '../components/FormElements';
+import { StyledEmptyState } from '../components/EmptyState';
+import { StyledClickableCard } from '../components/Card';
+import { StyledPageHeader, StyledPageTitle, StyledSuccessMessage } from '../components/PageHeader';
 
 const StyledReadingTitle = styled.h2`
   font-size: ${({ theme }) => theme.fontSize.lg};
@@ -73,12 +36,6 @@ const StyledReadingMeta = styled.div`
   color: ${({ theme }) => theme.colors.textMuted};
 `;
 
-const StyledEmptyState = styled.div`
-  text-align: center;
-  padding: ${({ theme }) => theme.spacing.xxl};
-  color: ${({ theme }) => theme.colors.textMuted};
-`;
-
 const StyledForm = styled.form`
   background: ${({ theme }) => theme.colors.surface};
   border: 1px solid ${({ theme }) => theme.colors.border};
@@ -92,87 +49,8 @@ const StyledFormTitle = styled.h2`
   margin-bottom: ${({ theme }) => theme.spacing.md};
 `;
 
-const StyledInput = styled.input`
-  width: 100%;
-  padding: ${({ theme }) => theme.spacing.sm} ${({ theme }) => theme.spacing.md};
-  border: 1px solid ${({ theme }) => theme.colors.border};
-  border-radius: ${({ theme }) => theme.borderRadius.md};
-  font-size: ${({ theme }) => theme.fontSize.base};
-  margin-bottom: ${({ theme }) => theme.spacing.md};
-
-  &:focus {
-    outline: none;
-    border-color: ${({ theme }) => theme.colors.borderFocus};
-    box-shadow: 0 0 0 3px ${({ theme }) => theme.colors.primaryLight};
-  }
-`;
-
-const StyledTextarea = styled.textarea`
-  width: 100%;
-  padding: ${({ theme }) => theme.spacing.sm} ${({ theme }) => theme.spacing.md};
-  border: 1px solid ${({ theme }) => theme.colors.border};
-  border-radius: ${({ theme }) => theme.borderRadius.md};
-  font-size: ${({ theme }) => theme.fontSize.base};
-  margin-bottom: ${({ theme }) => theme.spacing.md};
-  min-height: 80px;
-  resize: vertical;
-  font-family: inherit;
-
-  &:focus {
-    outline: none;
-    border-color: ${({ theme }) => theme.colors.borderFocus};
-    box-shadow: 0 0 0 3px ${({ theme }) => theme.colors.primaryLight};
-  }
-`;
-
-const StyledFormActions = styled.div`
-  display: flex;
-  gap: ${({ theme }) => theme.spacing.sm};
-  justify-content: flex-end;
-`;
-
-const StyledCancelButton = styled.button`
-  background: none;
-  border: 1px solid ${({ theme }) => theme.colors.border};
-  border-radius: ${({ theme }) => theme.borderRadius.md};
-  padding: ${({ theme }) => theme.spacing.sm} ${({ theme }) => theme.spacing.lg};
-  font-size: ${({ theme }) => theme.fontSize.sm};
-  cursor: pointer;
-  color: ${({ theme }) => theme.colors.textSecondary};
-
-  &:hover {
-    background: ${({ theme }) => theme.colors.background};
-  }
-`;
-
-const StyledErrorMessage = styled.p`
-  color: ${({ theme }) => theme.colors.error};
-  font-size: ${({ theme }) => theme.fontSize.sm};
-  margin-bottom: ${({ theme }) => theme.spacing.md};
-`;
-
-const StyledSearchInput = styled.input`
-  width: 100%;
-  padding: ${({ theme }) => theme.spacing.sm} ${({ theme }) => theme.spacing.md};
-  border: 1px solid ${({ theme }) => theme.colors.border};
-  border-radius: ${({ theme }) => theme.borderRadius.md};
-  font-size: ${({ theme }) => theme.fontSize.base};
+const StyledSearchInput = styled(StyledInput)`
   margin-bottom: ${({ theme }) => theme.spacing.lg};
-
-  &:focus {
-    outline: none;
-    border-color: ${({ theme }) => theme.colors.borderFocus};
-    box-shadow: 0 0 0 3px ${({ theme }) => theme.colors.primaryLight};
-  }
-`;
-
-const StyledSuccessMessage = styled.div`
-  background: #ecfdf5;
-  color: ${({ theme }) => theme.colors.success};
-  padding: ${({ theme }) => theme.spacing.md};
-  border-radius: ${({ theme }) => theme.borderRadius.md};
-  margin-bottom: ${({ theme }) => theme.spacing.md};
-  font-size: ${({ theme }) => theme.fontSize.sm};
 `;
 
 export default function ReadingsPage() {
@@ -286,7 +164,7 @@ export default function ReadingsPage() {
         </StyledEmptyState>
       ) : (
         filteredReadings.map((reading) => (
-          <StyledReadingCard key={reading.id} onClick={() => navigate(`/readings/${reading.id}`)}>
+          <StyledClickableCard key={reading.id} onClick={() => navigate(`/readings/${reading.id}`)}>
             <StyledReadingTitle>{reading.title}</StyledReadingTitle>
             <StyledReadingDescription>{reading.description}</StyledReadingDescription>
             <StyledReadingMeta>
@@ -296,7 +174,7 @@ export default function ReadingsPage() {
               </span>
               <span>{new Date(reading.createdAt).toLocaleDateString()}</span>
             </StyledReadingMeta>
-          </StyledReadingCard>
+          </StyledClickableCard>
         ))
       )}
     </>

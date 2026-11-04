@@ -2,6 +2,7 @@ import styled from 'styled-components';
 import { useAppSelector, useAppDispatch } from '../app/hooks';
 import { logout } from '../features/auth/authSlice';
 import { useNavigate, Link } from 'react-router-dom';
+import { useThemeMode } from '../styles/ThemeContext';
 
 const StyledHeader = styled.header`
   background: ${({ theme }) => theme.colors.surface};
@@ -29,7 +30,7 @@ const StyledUserInfo = styled.div`
 
 const StyledRoleBadge = styled.span<{ $role: string }>`
   background: ${({ $role, theme }) =>
-    $role === 'instructor' ? theme.colors.primaryLight : '#ECFDF5'};
+    $role === 'instructor' ? theme.colors.primaryLight : theme.colors.successLight};
   color: ${({ $role, theme }) =>
     $role === 'instructor' ? theme.colors.primary : theme.colors.success};
   padding: 2px ${({ theme }) => theme.spacing.sm};
@@ -53,6 +54,20 @@ const StyledLogoutButton = styled.button`
   }
 `;
 
+const StyledThemeToggle = styled.button`
+  background: none;
+  border: 1px solid ${({ theme }) => theme.colors.border};
+  border-radius: ${({ theme }) => theme.borderRadius.md};
+  padding: ${({ theme }) => theme.spacing.xs} ${({ theme }) => theme.spacing.sm};
+  cursor: pointer;
+  font-size: ${({ theme }) => theme.fontSize.base};
+  line-height: 1;
+
+  &:hover {
+    background: ${({ theme }) => theme.colors.background};
+  }
+`;
+
 const StyledMain = styled.main`
   max-width: 960px;
   margin: 0 auto;
@@ -63,6 +78,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
   const currentUser = useAppSelector((state) => state.auth.currentUser);
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
+  const { mode, toggleTheme } = useThemeMode();
 
   const handleLogout = () => {
     dispatch(logout());
@@ -73,13 +89,18 @@ export function Layout({ children }: { children: React.ReactNode }) {
     <>
       <StyledHeader>
         <StyledLogo to="/readings">Perusall</StyledLogo>
-        {currentUser && (
-          <StyledUserInfo>
-            <span>{currentUser.name}</span>
-            <StyledRoleBadge $role={currentUser.role}>{currentUser.role}</StyledRoleBadge>
-            <StyledLogoutButton onClick={handleLogout}>Switch User</StyledLogoutButton>
-          </StyledUserInfo>
-        )}
+        <StyledUserInfo>
+          <StyledThemeToggle onClick={toggleTheme} aria-label="Toggle theme">
+            {mode === 'light' ? '☾' : '☀'}
+          </StyledThemeToggle>
+          {currentUser && (
+            <>
+              <span>{currentUser.name}</span>
+              <StyledRoleBadge $role={currentUser.role}>{currentUser.role}</StyledRoleBadge>
+              <StyledLogoutButton onClick={handleLogout}>Switch User</StyledLogoutButton>
+            </>
+          )}
+        </StyledUserInfo>
       </StyledHeader>
       <StyledMain>{children}</StyledMain>
     </>
