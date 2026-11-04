@@ -17,7 +17,7 @@ No external database installation required — SQLite runs embedded.
 
 ```bash
 # Clone the repository
-git clone <repo-url>
+git clone git@github.com:joshuarichard/perusall.git
 cd perusall
 
 # Install dependencies
