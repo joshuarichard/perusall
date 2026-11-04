@@ -7,7 +7,7 @@ import { configureStore } from '@reduxjs/toolkit';
 import { theme } from './styles/theme';
 import { I18nProvider } from './i18n';
 import { api } from './app/api';
-import authReducer from './features/auth/authSlice';
+import authReducer from './app/authSlice';
 
 interface ExtendedRenderOptions extends Omit<RenderOptions, 'queries'> {
   preloadedState?: Record<string, unknown>;

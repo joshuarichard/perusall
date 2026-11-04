@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useGetUsersQuery } from '../app/api';
 import type { User } from '../app/types';
 import { useAppDispatch } from '../app/hooks';
-import { setCurrentUser } from '../features/auth/authSlice';
+import { setCurrentUser } from '../app/authSlice';
 import { useTranslation } from '../i18n';
 
 const StyledContainer = styled.div`

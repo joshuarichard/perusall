@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 import { useAppSelector, useAppDispatch } from '../app/hooks';
-import { logout } from '../features/auth/authSlice';
+import { logout } from '../app/authSlice';
 import { useNavigate, Link } from 'react-router-dom';
 import { useThemeMode } from '../styles';
 import { useTranslation, type Locale } from '../i18n';

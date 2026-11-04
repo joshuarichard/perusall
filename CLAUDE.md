@@ -27,9 +27,8 @@ perusall/
 ├── shared/
 │   └── types.ts          # Shared wire types (User, Reading, Annotation, etc.)
 ├── client/src/
-│   ├── app/              # Redux store + RTK Query API (api.ts, hooks.ts, types.ts)
+│   ├── app/              # Redux store, RTK Query API, auth slice (hooks.ts, types.ts)
 │   ├── components/       # Reusable UI primitives (barrel: index.ts)
-│   ├── features/auth/    # Auth slice (user selection, no real auth)
 │   ├── i18n/             # I18n context, translations, hook (barrel: index.ts)
 │   ├── pages/            # Route-level pages + colocated tests
 │   └── styles/           # Theme, dark mode, global styles (barrel: index.ts)
