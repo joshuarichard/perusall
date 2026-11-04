@@ -141,6 +141,7 @@ npm run db:reset
 | **State**        | Redux Toolkit + RTK Query | Eliminates Redux boilerplate, built-in API caching and cache invalidation |
 | **Styling**      | Styled Components         | Scoped CSS-in-JS, theming support, dynamic styles via props               |
 | **Types**        | Shared `shared/types.ts`  | Single source of truth for API wire types across client and server        |
+| **Validation**   | Zod                       | Runtime request validation, schemas infer TypeScript types via `z.infer`  |
 | **Server**       | Express + TypeScript      | Lightweight, familiar, same language as frontend                          |
 | **Database**     | SQLite via Prisma 7       | Zero-config, file-based, type-safe queries, driver adapter pattern        |
 
