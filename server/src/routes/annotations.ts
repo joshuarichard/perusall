@@ -1,15 +1,12 @@
 import { Router, type Request, type Response } from 'express';
 import { prisma } from '../data';
-import type { Annotation, ApiError, CreateAnnotationBody, UpdateAnnotationBody } from '../types';
+import type { ApiError, CreateAnnotationBody, UpdateAnnotationBody } from '../types';
 
 export const annotationsRouter = Router();
 
 annotationsRouter.post(
   '/',
-  async (
-    req: Request<{}, Annotation | ApiError, CreateAnnotationBody>,
-    res: Response<Annotation | ApiError>,
-  ) => {
+  async (req: Request<{}, unknown, CreateAnnotationBody>, res: Response) => {
     const { content, readingId, authorId, parentId } = req.body;
 
     if (!content?.trim()) {
@@ -50,10 +47,7 @@ annotationsRouter.post(
 
 annotationsRouter.patch(
   '/:id',
-  async (
-    req: Request<{ id: string }, Annotation | ApiError, UpdateAnnotationBody>,
-    res: Response<Annotation | ApiError>,
-  ) => {
+  async (req: Request<{ id: string }, unknown, UpdateAnnotationBody>, res: Response) => {
     const { content, authorId } = req.body;
 
     if (!content?.trim()) {
