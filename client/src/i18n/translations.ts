@@ -12,6 +12,7 @@ export const translations: Record<Locale, Translations> = {
     'login.error': 'Failed to load users. Is the server running?',
 
     // Layout
+    'layout.skipToContent': 'Skip to content',
     'layout.switchUser': 'Switch User',
     'role.instructor': 'Instructor',
     'role.student': 'Student',
@@ -61,6 +62,7 @@ export const translations: Record<Locale, Translations> = {
     'detail.noAnnotationsFromStudent': 'No annotations from this student.',
     'detail.annotationEmpty': 'Annotation cannot be empty.',
     'detail.postError': 'Failed to post annotation. Please try again.',
+    'detail.filterByStudent': 'Filter annotations by student',
 
     // Annotation actions
     'annotation.saving': 'Saving...',
@@ -75,6 +77,8 @@ export const translations: Record<Locale, Translations> = {
     'annotation.reply': 'Reply',
     'annotation.replyTo': 'Reply to {{name}}...',
     'annotation.replyPosting': 'Posting...',
+    'annotation.editLabel': 'Edit annotation',
+    'annotation.repliesTo': 'Replies to {{name}}',
   },
 
   es: {
@@ -86,6 +90,7 @@ export const translations: Record<Locale, Translations> = {
     'login.error': 'Error al cargar usuarios. ¿Está el servidor en ejecución?',
 
     // Layout
+    'layout.skipToContent': 'Ir al contenido',
     'layout.switchUser': 'Cambiar Usuario',
     'role.instructor': 'Instructor',
     'role.student': 'Estudiante',
@@ -135,6 +140,7 @@ export const translations: Record<Locale, Translations> = {
     'detail.noAnnotationsFromStudent': 'No hay anotaciones de este estudiante.',
     'detail.annotationEmpty': 'La anotación no puede estar vacía.',
     'detail.postError': 'Error al publicar la anotación. Intenta de nuevo.',
+    'detail.filterByStudent': 'Filtrar anotaciones por estudiante',
 
     // Annotation actions
     'annotation.saving': 'Guardando...',
@@ -149,5 +155,7 @@ export const translations: Record<Locale, Translations> = {
     'annotation.reply': 'Responder',
     'annotation.replyTo': 'Responder a {{name}}...',
     'annotation.replyPosting': 'Publicando...',
+    'annotation.editLabel': 'Editar anotación',
+    'annotation.repliesTo': 'Respuestas a {{name}}',
   },
 };

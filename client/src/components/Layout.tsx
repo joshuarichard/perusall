@@ -112,6 +112,9 @@ export function Layout({ children }: { children: React.ReactNode }) {
 
   return (
     <>
+      <a href="#main-content" className="skip-link">
+        {t('layout.skipToContent')}
+      </a>
       <StyledHeader>
         <StyledLogo to="/readings">
           <StyledLogoImage src="/perusall-logo.png" alt="Perusall" />
@@ -141,7 +144,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
           )}
         </StyledUserInfo>
       </StyledHeader>
-      <StyledMain>{children}</StyledMain>
+      <StyledMain id="main-content">{children}</StyledMain>
     </>
   );
 }

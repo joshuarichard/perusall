@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 
 export const StyledButton = styled.button`
-  background: ${({ theme }) => theme.colors.primary};
+  background: ${({ theme }) => theme.colors.buttonPrimary};
   color: white;
   border: none;
   border-radius: ${({ theme }) => theme.borderRadius.md};
@@ -13,7 +13,7 @@ export const StyledButton = styled.button`
   white-space: nowrap;
 
   &:hover {
-    background: ${({ theme }) => theme.colors.primaryHover};
+    background: ${({ theme }) => theme.colors.buttonPrimaryHover};
   }
 
   &:disabled {

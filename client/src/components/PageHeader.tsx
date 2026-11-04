@@ -11,7 +11,7 @@ export const StyledPageTitle = styled.h1`
   font-size: ${({ theme }) => theme.fontSize.xxl};
 `;
 
-export const StyledSuccessMessage = styled.div`
+export const StyledSuccessMessage = styled.div.attrs({ role: 'status', 'aria-live': 'polite' })`
   background: ${({ theme }) => theme.colors.successLight};
   color: ${({ theme }) => theme.colors.success};
   padding: ${({ theme }) => theme.spacing.md};

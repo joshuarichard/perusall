@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useCallback, type ReactNode } from 'react';
+import { createContext, useContext, useState, useCallback, useEffect, type ReactNode } from 'react';
 import { translations, type Locale } from './translations';
 
 type I18nContextValue = {
@@ -37,6 +37,10 @@ export function I18nProvider({ children }: { children: ReactNode }) {
       // localStorage unavailable
     }
   }, []);
+
+  useEffect(() => {
+    document.documentElement.lang = locale;
+  }, [locale]);
 
   const t = useCallback(
     (key: string, params?: Record<string, string | number>) => {

@@ -189,7 +189,18 @@ export default function ReadingsPage() {
         </StyledEmptyState>
       ) : (
         filteredReadings.map((reading) => (
-          <StyledClickableCard key={reading.id} onClick={() => navigate(`/readings/${reading.id}`)}>
+          <StyledClickableCard
+            key={reading.id}
+            role="link"
+            tabIndex={0}
+            onClick={() => navigate(`/readings/${reading.id}`)}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                navigate(`/readings/${reading.id}`);
+              }
+            }}
+          >
             <StyledReadingTitle>{reading.title}</StyledReadingTitle>
             <StyledReadingDescription>{reading.description}</StyledReadingDescription>
             <StyledReadingMeta>

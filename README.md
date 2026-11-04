@@ -97,6 +97,7 @@ npm run db:reset
 | 1 | **Dark Mode** — System preference detection, manual toggle, localStorage persistence | :white_check_mark: |
 | 2 | **Internationalization (i18n)** — Multi-language support (English/Spanish), browser detection, localStorage persistence | :white_check_mark: |
 | 3 | **Brand Theming** — Perusall logo and brand color palette across light and dark themes | :white_check_mark: |
+| 4 | **Accessibility (a11y)** — WCAG AA contrast, focus indicators, keyboard navigation, ARIA labels, skip link, live regions | :white_check_mark: |
 
 ### For Students
 
@@ -125,6 +126,7 @@ npm run db:reset
 - Annotations displayed in reverse chronological order with nested reply threads
 - Form validation prevents empty submissions
 - Shared UI primitives (buttons, cards, forms, empty states) across all pages
+- Accessibility: WCAG AA color contrast, visible focus indicators, keyboard-navigable reading cards, skip-to-content link, ARIA live regions for notifications, `aria-label` on all form controls, `html lang` synced to active locale
 
 ## Architecture
 

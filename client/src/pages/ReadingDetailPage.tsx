@@ -234,6 +234,7 @@ export default function ReadingDetailPage() {
             <StyledFilterSelect
               value={filterAuthorId}
               onChange={(e) => setFilterAuthorId(e.target.value)}
+              aria-label={t('detail.filterByStudent')}
             >
               <option value="">{t('detail.allStudents')}</option>
               {uniqueAuthors.map((author) => (
@@ -251,6 +252,7 @@ export default function ReadingDetailPage() {
             <StyledAnnotationForm onSubmit={handleSubmit}>
               <StyledAnnotationInput
                 placeholder={t('detail.sharePlaceholder')}
+                aria-label={t('detail.sharePlaceholder')}
                 value={content}
                 onChange={(e) => setContent(e.target.value)}
               />

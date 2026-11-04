@@ -61,6 +61,8 @@ perusall/
 - Extensionless local imports (no `.js` suffixes)
 - Comments explain _why_, not _what_
 - Error boundaries at route level
+- Accessibility: WCAG AA color contrast, `:focus-visible` outlines globally, `aria-label` on form controls without visible labels, `role="alert"`/`aria-live` on dynamic messages, keyboard-navigable interactive elements, `document.documentElement.lang` synced to locale
+- Button backgrounds use `buttonPrimary`/`buttonPrimaryHover` tokens (separate from `primary` for dark mode contrast with white text)
 
 ## Testing Approach
 

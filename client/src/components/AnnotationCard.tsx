@@ -182,7 +182,11 @@ export function AnnotationCard({
 
         {isEditing ? (
           <StyledEditForm onSubmit={handleSave}>
-            <StyledEditInput value={editContent} onChange={(e) => setEditContent(e.target.value)} />
+            <StyledEditInput
+              value={editContent}
+              onChange={(e) => setEditContent(e.target.value)}
+              aria-label={t('annotation.editLabel')}
+            />
             <StyledFormActions>
               <StyledEditCancelButton
                 type="button"
@@ -240,6 +244,7 @@ export function AnnotationCard({
         <StyledReplyForm onSubmit={handleReply}>
           <StyledReplyInput
             placeholder={t('annotation.replyTo', { name: annotation.author.name })}
+            aria-label={t('annotation.replyTo', { name: annotation.author.name })}
             value={replyContent}
             onChange={(e) => setReplyContent(e.target.value)}
           />
@@ -264,7 +269,10 @@ export function AnnotationCard({
       )}
 
       {annotation.replies && annotation.replies.length > 0 && (
-        <StyledReplies>
+        <StyledReplies
+          role="group"
+          aria-label={t('annotation.repliesTo', { name: annotation.author.name })}
+        >
           {annotation.replies.map((reply) => (
             <AnnotationCard
               key={reply.id}

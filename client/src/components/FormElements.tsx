@@ -43,7 +43,7 @@ export const StyledFormActions = styled.div`
   justify-content: flex-end;
 `;
 
-export const StyledErrorMessage = styled.p`
+export const StyledErrorMessage = styled.p.attrs({ role: 'alert' })`
   color: ${({ theme }) => theme.colors.error};
   font-size: ${({ theme }) => theme.fontSize.sm};
   margin-bottom: ${({ theme }) => theme.spacing.md};
