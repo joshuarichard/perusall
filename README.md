@@ -85,7 +85,8 @@ npm run db:reset
 | 2 | **Editing** — Edit or delete own annotations | :white_check_mark: |
 | 3 | **Replies** — Reply to other annotations (unlimited depth) | :white_check_mark: |
 | 4 | **Search** — Search readings by title | :white_check_mark: |
-| 5 | **Testing** — Automated tests (142 across 4 suites) | :white_check_mark: |
+| 5 | **Delete Readings** — Instructors delete own readings (cascades annotations) | :white_check_mark: |
+| 6 | **Testing** — Automated tests (149 across 4 suites) | :white_check_mark: |
 
 #### Above & Beyond
 
@@ -106,6 +107,7 @@ npm run db:reset
 ### For Instructors
 
 - Create new readings with title and description
+- Delete own readings with confirmation (cascades to all annotations)
 - View annotation counts per reading
 - See unique student participation statistics
 - Review all annotations and discussion threads
@@ -163,6 +165,7 @@ Annotations support unlimited reply depth via the self-referential `parentId` fo
 | `POST`   | `/api/annotations`        | Add annotation or reply to a reading     | Student    |
 | `PATCH`  | `/api/annotations/:id`    | Edit an annotation (owner only)          | Student    |
 | `DELETE` | `/api/annotations/:id`    | Delete an annotation (owner only)        | Student    |
+| `DELETE` | `/api/readings/:id`       | Delete a reading and its annotations (owner only) | Instructor |
 | `GET`    | `/api/readings/:id/stats` | Reading engagement statistics            | Instructor |
 
 ## Development
@@ -195,8 +198,8 @@ npm run test:e2e         # Playwright E2E tests (requires dev servers)
 
 | Suite                    | Count   | Framework                | Approach                                          |
 | ------------------------ | ------- | ------------------------ | ------------------------------------------------- |
-| Server unit tests        | 30      | Vitest + Supertest       | Mocked Prisma client, colocated with routes       |
-| Server integration tests | 39      | Vitest + Supertest       | Real temp SQLite databases, full HTTP stack       |
+| Server unit tests        | 33      | Vitest + Supertest       | Mocked Prisma client, colocated with routes       |
+| Server integration tests | 43      | Vitest + Supertest       | Real temp SQLite databases, full HTTP stack       |
 | Client unit tests        | 59      | Vitest + Testing Library | Component rendering, user interaction, mocked API |
 | E2E tests                | 14      | Playwright               | Browser-based flows against running app           |
-| **Total**                | **142** |                          |                                                   |
+| **Total**                | **149** |                          |                                                   |

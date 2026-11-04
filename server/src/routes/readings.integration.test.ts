@@ -251,6 +251,61 @@ describe('POST /api/readings', () => {
   });
 });
 
+describe('DELETE /api/readings/:id', () => {
+  it('deletes a reading and all its annotations', async () => {
+    const instructor = await seedInstructor();
+    const student = await seedStudent();
+    const reading = await seedReading(instructor.id);
+    await prisma.annotation.create({
+      data: { content: 'Note', readingId: reading.id, authorId: student.id },
+    });
+
+    const res = await request.delete(`/api/readings/${reading.id}`).send({ userId: instructor.id });
+
+    expect(res.status).toBe(200);
+    expect(res.body).toEqual({ success: true });
+
+    const readings = await prisma.reading.findMany();
+    expect(readings).toHaveLength(0);
+    const annotations = await prisma.annotation.findMany();
+    expect(annotations).toHaveLength(0);
+  });
+
+  it('returns 404 for nonexistent reading', async () => {
+    const res = await request.delete('/api/readings/nonexistent').send({ userId: 'any' });
+    expect(res.status).toBe(404);
+    expect(res.body.error).toBe(Errors.READING_NOT_FOUND);
+  });
+
+  it('returns 403 when user is not the creator', async () => {
+    const instructor = await seedInstructor();
+    const student = await seedStudent();
+    const reading = await seedReading(instructor.id);
+
+    const res = await request.delete(`/api/readings/${reading.id}`).send({ userId: student.id });
+
+    expect(res.status).toBe(403);
+    expect(res.body.error).toBe(Errors.DELETE_OWN_READING_ONLY);
+
+    const readings = await prisma.reading.findMany();
+    expect(readings).toHaveLength(1);
+  });
+
+  it('does not affect other readings', async () => {
+    const instructor = await seedInstructor();
+    const reading1 = await seedReading(instructor.id);
+    const reading2 = await prisma.reading.create({
+      data: { title: 'Other Reading', description: 'Keep this', createdBy: instructor.id },
+    });
+
+    await request.delete(`/api/readings/${reading1.id}`).send({ userId: instructor.id });
+
+    const readings = await prisma.reading.findMany();
+    expect(readings).toHaveLength(1);
+    expect(readings[0].id).toBe(reading2.id);
+  });
+});
+
 describe('GET /api/readings/:id/stats', () => {
   it('returns 404 for nonexistent reading', async () => {
     const res = await request.get('/api/readings/nonexistent/stats');

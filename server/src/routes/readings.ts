@@ -1,7 +1,7 @@
 import { Router, type Request, type Response } from 'express';
 import { prisma } from '../data';
 import { Errors } from '../types';
-import type { ApiError, CreateReadingBody } from '../types';
+import type { ApiError, CreateReadingBody, DeleteReadingBody } from '../types';
 
 export const readingsRouter = Router();
 
@@ -66,6 +66,30 @@ readingsRouter.post('/', async (req: Request<{}, unknown, CreateReadingBody>, re
 
   res.status(201).json(reading);
 });
+
+readingsRouter.delete(
+  '/:id',
+  async (req: Request<{ id: string }, unknown, DeleteReadingBody>, res: Response) => {
+    const { userId } = req.body;
+
+    const reading = await prisma.reading.findUnique({ where: { id: req.params.id } });
+
+    if (!reading) {
+      res.status(404).json({ error: Errors.READING_NOT_FOUND });
+      return;
+    }
+
+    if (reading.createdBy !== userId) {
+      res.status(403).json({ error: Errors.DELETE_OWN_READING_ONLY });
+      return;
+    }
+
+    await prisma.annotation.deleteMany({ where: { readingId: reading.id } });
+    await prisma.reading.delete({ where: { id: reading.id } });
+
+    res.json({ success: true });
+  },
+);
 
 readingsRouter.get('/:id/stats', async (req: Request<{ id: string }>, res: Response) => {
   const reading = await prisma.reading.findUnique({

@@ -34,6 +34,15 @@ export const api = createApi({
       invalidatesTags: ['Reading'],
     }),
 
+    deleteReading: builder.mutation<{ success: true }, { id: string; userId: string }>({
+      query: ({ id, userId }) => ({
+        url: `/readings/${id}`,
+        method: 'DELETE',
+        body: { userId },
+      }),
+      invalidatesTags: ['Reading'],
+    }),
+
     createAnnotation: builder.mutation<
       Annotation,
       { content: string; readingId: string; authorId: string; parentId?: string }
@@ -82,6 +91,7 @@ export const {
   useGetReadingQuery,
   useGetReadingStatsQuery,
   useCreateReadingMutation,
+  useDeleteReadingMutation,
   useCreateAnnotationMutation,
   useUpdateAnnotationMutation,
   useDeleteAnnotationMutation,

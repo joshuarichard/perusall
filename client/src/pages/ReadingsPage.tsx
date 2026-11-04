@@ -2,11 +2,16 @@ import { useMemo, useState } from 'react';
 import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
 import { useAppSelector } from '../app/hooks';
-import { useGetReadingsQuery, useCreateReadingMutation } from '../app/api';
+import {
+  useGetReadingsQuery,
+  useCreateReadingMutation,
+  useDeleteReadingMutation,
+} from '../app/api';
 import { useTranslation } from '../i18n';
 import {
   StyledButton,
   StyledCancelButton,
+  StyledDeleteButton,
   StyledInput,
   StyledTextarea,
   StyledFormActions,
@@ -63,6 +68,7 @@ export default function ReadingsPage() {
   const { data: readings, isLoading, error } = useGetReadingsQuery();
   const { t } = useTranslation();
   const [createReading, { isLoading: isCreating }] = useCreateReadingMutation();
+  const [deleteReading, { isLoading: isDeleting }] = useDeleteReadingMutation();
 
   const [showForm, setShowForm] = useState(false);
   const [title, setTitle] = useState('');
@@ -70,6 +76,7 @@ export default function ReadingsPage() {
   const [formError, setFormError] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
+  const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
 
   const isInstructor = currentUser?.role === 'instructor';
 
@@ -103,6 +110,19 @@ export default function ReadingsPage() {
       setTimeout(() => setSuccessMessage(''), 3000);
     } catch {
       setFormError(t('readings.createError'));
+    }
+  };
+
+  const handleDelete = async (readingId: string) => {
+    try {
+      await deleteReading({ id: readingId, userId: currentUser!.id }).unwrap();
+      setConfirmDeleteId(null);
+      setSuccessMessage(t('readings.deletedSuccess'));
+      setTimeout(() => setSuccessMessage(''), 3000);
+    } catch {
+      setConfirmDeleteId(null);
+      setSuccessMessage(t('readings.deleteError'));
+      setTimeout(() => setSuccessMessage(''), 3000);
     }
   };
 
@@ -180,6 +200,42 @@ export default function ReadingsPage() {
                   : t('readings.annotationCount', { count: reading._count.annotations })}
               </span>
               <span>{new Date(reading.createdAt).toLocaleDateString()}</span>
+              {currentUser?.id === reading.createdBy && (
+                <>
+                  {confirmDeleteId === reading.id ? (
+                    <>
+                      <span>{t('readings.deleteConfirm')}</span>
+                      <StyledDeleteButton
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleDelete(reading.id);
+                        }}
+                        disabled={isDeleting}
+                      >
+                        {isDeleting ? t('readings.deleting') : t('readings.deleteYes')}
+                      </StyledDeleteButton>
+                      <StyledCancelButton
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setConfirmDeleteId(null);
+                        }}
+                        style={{ padding: 0, border: 'none', fontSize: 'inherit' }}
+                      >
+                        {t('readings.deleteNo')}
+                      </StyledCancelButton>
+                    </>
+                  ) : (
+                    <StyledDeleteButton
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setConfirmDeleteId(reading.id);
+                      }}
+                    >
+                      {t('annotation.delete')}
+                    </StyledDeleteButton>
+                  )}
+                </>
+              )}
             </StyledReadingMeta>
           </StyledClickableCard>
         ))

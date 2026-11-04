@@ -7,8 +7,8 @@ import { Errors } from '../types';
 vi.mock('../data', () => ({
   prisma: {
     user: { findMany: vi.fn() },
-    reading: { findMany: vi.fn(), findUnique: vi.fn(), create: vi.fn() },
-    annotation: { create: vi.fn() },
+    reading: { findMany: vi.fn(), findUnique: vi.fn(), create: vi.fn(), delete: vi.fn() },
+    annotation: { create: vi.fn(), deleteMany: vi.fn() },
   },
 }));
 
@@ -230,6 +230,49 @@ describe('POST /api/readings', () => {
         data: { title: 'Trimmed', description: 'Also trimmed', createdBy: 'inst-1' },
       }),
     );
+  });
+});
+
+describe('DELETE /api/readings/:id', () => {
+  it('deletes a reading and its annotations', async () => {
+    vi.mocked(prisma.reading.findUnique).mockResolvedValue({
+      id: 'r1',
+      createdBy: 'inst-1',
+    } as any);
+    vi.mocked(prisma.annotation.deleteMany).mockResolvedValue({ count: 3 } as any);
+    vi.mocked(prisma.reading.delete).mockResolvedValue({} as any);
+
+    const res = await request(app).delete('/api/readings/r1').send({ userId: 'inst-1' });
+
+    expect(res.status).toBe(200);
+    expect(res.body).toEqual({ success: true });
+    expect(prisma.annotation.deleteMany).toHaveBeenCalledWith({ where: { readingId: 'r1' } });
+    expect(prisma.reading.delete).toHaveBeenCalledWith({ where: { id: 'r1' } });
+  });
+
+  it('returns 404 for nonexistent reading', async () => {
+    vi.mocked(prisma.reading.findUnique).mockResolvedValue(null);
+
+    const res = await request(app).delete('/api/readings/nonexistent').send({ userId: 'inst-1' });
+
+    expect(res.status).toBe(404);
+    expect(res.body).toEqual({ error: Errors.READING_NOT_FOUND });
+    expect(prisma.annotation.deleteMany).not.toHaveBeenCalled();
+    expect(prisma.reading.delete).not.toHaveBeenCalled();
+  });
+
+  it('returns 403 when user is not the creator', async () => {
+    vi.mocked(prisma.reading.findUnique).mockResolvedValue({
+      id: 'r1',
+      createdBy: 'inst-1',
+    } as any);
+
+    const res = await request(app).delete('/api/readings/r1').send({ userId: 'stu-1' });
+
+    expect(res.status).toBe(403);
+    expect(res.body).toEqual({ error: Errors.DELETE_OWN_READING_ONLY });
+    expect(prisma.annotation.deleteMany).not.toHaveBeenCalled();
+    expect(prisma.reading.delete).not.toHaveBeenCalled();
   });
 });
 

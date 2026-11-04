@@ -4,6 +4,10 @@ export type CreateReadingBody = {
   createdBy: string;
 };
 
+export type DeleteReadingBody = {
+  userId: string;
+};
+
 export type CreateAnnotationBody = {
   content: string;
   readingId: string;
@@ -30,4 +34,5 @@ export const Errors = {
   ANNOTATION_NOT_FOUND: 'Annotation not found',
   EDIT_OWN_ONLY: 'You can only edit your own annotations',
   DELETE_OWN_ONLY: 'You can only delete your own annotations',
+  DELETE_OWN_READING_ONLY: 'You can only delete your own readings',
 } as const;

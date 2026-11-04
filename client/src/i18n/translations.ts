@@ -37,6 +37,12 @@ export const translations: Record<Locale, Translations> = {
     'readings.by': 'By {{name}}',
     'readings.annotationCount': '{{count}} annotation',
     'readings.annotationCountPlural': '{{count}} annotations',
+    'readings.deleteConfirm': 'Delete this reading and all its annotations?',
+    'readings.deleteYes': 'Yes, delete',
+    'readings.deleteNo': 'Cancel',
+    'readings.deleting': 'Deleting...',
+    'readings.deletedSuccess': 'Reading deleted.',
+    'readings.deleteError': 'Failed to delete reading.',
 
     // Reading detail
     'detail.loading': 'Loading reading...',
@@ -105,6 +111,12 @@ export const translations: Record<Locale, Translations> = {
     'readings.by': 'Por {{name}}',
     'readings.annotationCount': '{{count}} anotación',
     'readings.annotationCountPlural': '{{count}} anotaciones',
+    'readings.deleteConfirm': '¿Eliminar esta lectura y todas sus anotaciones?',
+    'readings.deleteYes': 'Sí, eliminar',
+    'readings.deleteNo': 'Cancelar',
+    'readings.deleting': 'Eliminando...',
+    'readings.deletedSuccess': 'Lectura eliminada.',
+    'readings.deleteError': 'Error al eliminar la lectura.',
 
     // Reading detail
     'detail.loading': 'Cargando lectura...',
