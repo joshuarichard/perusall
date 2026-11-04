@@ -52,6 +52,48 @@ npm run db:reset
 
 ## Features
 
+### Exercise Checklist
+
+#### Required
+
+| # | Requirement | Status |
+|---|-------------|--------|
+| 1 | **Users & Roles** — Support Instructor and Student roles | :white_check_mark: |
+| 2 | **Users & Roles** — Select identity to simulate login | :white_check_mark: |
+| 3 | **Users & Roles** — Role-appropriate functionality | :white_check_mark: |
+| 4 | **Reading Management** — Instructors create readings (title + description) | :white_check_mark: |
+| 5 | **Reading Management** — Students browse and select readings | :white_check_mark: |
+| 6 | **Reading Management** — Display annotation count per reading | :white_check_mark: |
+| 7 | **Reading Management** — Persist readings in the database | :white_check_mark: |
+| 8 | **Annotations** — Students add comments to readings | :white_check_mark: |
+| 9 | **Annotations** — Display author name and timestamp | :white_check_mark: |
+| 10 | **Annotations** — Reverse chronological order | :white_check_mark: |
+| 11 | **Annotations** — Display new annotations without page refresh | :white_check_mark: |
+| 12 | **Annotations** — Prevent empty annotations, persist all submissions | :white_check_mark: |
+| 13 | **Instructor Overview** — Total annotations per reading | :white_check_mark: |
+| 14 | **Instructor Overview** — Unique student participation count | :white_check_mark: |
+| 15 | **Instructor Overview** — Review all annotations for a reading | :white_check_mark: |
+| 16 | **User Experience** — Intuitive navigation for readings and discussions | :white_check_mark: |
+| 17 | **User Experience** — Success and error messages | :white_check_mark: |
+| 18 | **User Experience** — Graceful empty states | :white_check_mark: |
+
+#### Optional Enhancements
+
+| # | Enhancement | Status |
+|---|-------------|--------|
+| 1 | **Filtering** — Filter annotations by student | :white_check_mark: |
+| 2 | **Editing** — Edit or delete own annotations | :white_check_mark: |
+| 3 | **Replies** — Reply to other annotations (unlimited depth) | :white_check_mark: |
+| 4 | **Search** — Search readings by title | :white_check_mark: |
+| 5 | **Testing** — Automated tests (142 across 4 suites) | :white_check_mark: |
+
+#### Above & Beyond
+
+| # | Enhancement | Status |
+|---|-------------|--------|
+| 1 | **Dark Mode** — System preference detection, manual toggle, localStorage persistence | :white_check_mark: |
+| 2 | **Internationalization (i18n)** — Multi-language support | :black_square_button: |
+
 ### For Students
 
 - Browse and search readings by title
