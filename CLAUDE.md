@@ -1,121 +1,44 @@
 # Perusall Collaborative Reading App
 
-## Project Overview
+Full-stack collaborative reading app — Perusall Sr. SWE take-home exercise. See README.md for architecture, features, and API reference.
 
-A full-stack Collaborative Reading App built as a take-home exercise for Perusall's Sr. Software Engineer role. Instructors assign readings; students discuss them through annotations.
+## Commands
 
-## Tech Stack
+```bash
+npm run dev              # Start client (:5173) + server (:3001)
+npm run dev:client       # Client only
+npm run dev:server       # Server only
+npm run seed             # Seed database with sample data
+npm run db:migrate       # Run Prisma migrations
+npm run db:setup         # Migrate + seed
+npm run db:reset         # Reset DB and re-seed
+npm run typecheck        # TypeScript type checking
+npm run test             # Unit tests (server + client)
+npm run test:server      # Server unit tests only
+npm run test:client      # Client unit tests only
+npm run test:integration # Server integration tests (real SQLite)
+npm run test:e2e         # Playwright E2E tests
+```
 
-### Frontend
-
-- **React 18** with TypeScript
-- **Vite** — fast dev server with HMR, ESBuild-powered bundling
-- **Redux Toolkit (RTK)** — state management with RTK Query for API layer
-- **Styled Components** — CSS-in-JS with theme support
-
-### Backend
-
-- **Express.js** with TypeScript
-- **SQLite** via `better-sqlite3` — zero-config, file-based database
-- **Prisma** — type-safe ORM with auto-generated TypeScript types
-
-### Project Structure
+## Project Structure
 
 ```
 perusall/
-├── client/                 # Vite + React frontend
-│   ├── src/
-│   │   ├── app/            # Redux store + RTK Query API
-│   │   ├── components/     # Reusable UI components
-│   │   ├── features/auth/  # Auth slice (user selection)
-│   │   ├── pages/          # Route-level page components
-│   │   └── styles/         # Styled Components theme + global styles
-│   └── vite.config.ts
-├── server/                 # Express backend
-│   ├── src/
-│   │   ├── data/           # Database client + seed script (barrel: index.ts)
-│   │   ├── routes/         # API route handlers (barrel: index.ts)
-│   │   └── types.ts        # Shared TypeScript interfaces
-│   ├── prisma/             # Prisma schema + migrations
-│   └── docs/               # API documentation
-└── resources/              # Exercise prompt + reference materials
+├── client/src/
+│   ├── app/              # Redux store + RTK Query API (api.ts, hooks.ts)
+│   ├── components/       # Reusable UI (Layout)
+│   ├── features/auth/    # Auth slice (user selection, no real auth)
+│   ├── pages/            # Route-level pages + colocated tests
+│   └── styles/           # Styled Components theme + global styles
+├── server/src/
+│   ├── data/             # Prisma client + seed script (barrel: index.ts)
+│   ├── routes/           # API handlers + colocated tests (barrel: index.ts)
+│   ├── test/             # Integration test helper (creates temp SQLite DBs)
+│   └── types.ts          # Shared TypeScript interfaces
+├── server/prisma/        # Schema + migrations
+├── e2e/                  # Playwright E2E tests
+└── playwright.config.ts
 ```
-
-## Key Commands
-
-```bash
-# Install all dependencies
-npm install
-
-# Start development (both client + server)
-npm run dev
-
-# Client only (Vite dev server on :5173)
-npm run dev:client
-
-# Server only (Express on :3001)
-npm run dev:server
-
-# Seed the database with sample data
-npm run seed
-
-# Run Prisma migrations
-npm run db:migrate
-
-# Type check
-npm run typecheck
-
-# Run all tests
-npm run test
-
-# Server tests only
-npm run test:server
-
-# Client tests only
-npm run test:client
-```
-
-## Data Model
-
-### Users (simulated — no real auth)
-
-- `id`: string (UUID)
-- `name`: string
-- `role`: "instructor" | "student"
-
-### Readings
-
-- `id`: string (UUID)
-- `title`: string
-- `description`: string
-- `createdBy`: string (user ID)
-- `createdAt`: datetime
-
-### Annotations
-
-- `id`: string (UUID)
-- `readingId`: string (foreign key)
-- `authorId`: string (foreign key → User)
-- `content`: string (non-empty, validated)
-- `createdAt`: datetime
-
-## API Endpoints
-
-```
-GET    /api/users              # List available users
-GET    /api/readings           # List all readings (with annotation counts)
-POST   /api/readings           # Create a reading (instructor only)
-GET    /api/readings/:id       # Get a single reading with annotations
-POST   /api/annotations        # Create an annotation (student only)
-GET    /api/readings/:id/stats # Instructor stats (annotation count, unique students)
-```
-
-## Testing
-
-- **Framework**: Vitest for both client and server
-- **Server tests**: Supertest with mocked Prisma client, colocated next to route files
-- **Client tests**: React Testing Library + user-event, colocated next to source files
-- Tests are colocated: `Component.test.tsx` sits next to `Component.tsx`
 
 ## Coding Conventions
 
@@ -128,3 +51,21 @@ GET    /api/readings/:id/stats # Instructor stats (annotation count, unique stud
 - Extensionless local imports (no `.js` suffixes)
 - Comments explain _why_, not _what_
 - Error boundaries at route level
+
+## Testing Approach
+
+- **Unit tests** (Vitest): colocated `*.test.ts(x)` files next to source
+  - Server: Supertest with mocked Prisma client
+  - Client: React Testing Library + user-event
+- **Integration tests** (`*.integration.test.ts`): real temp SQLite DBs via `vi.doMock` + dynamic app import
+- **E2E tests** (Playwright): browser-based flows against running dev servers
+
+## Data Model
+
+Prisma schema at `server/prisma/schema.prisma`. Key relations:
+
+- **User** → role is `"instructor"` or `"student"` (simulated auth via user selection)
+- **Reading** → belongs to User (creator) via `createdBy`
+- **Annotation** → belongs to Reading + User (author); self-referential `parentId` for threaded replies (unlimited depth)
+
+Server builds annotation trees from a flat query using an in-memory Map — see `readings.ts` GET `/:id`.

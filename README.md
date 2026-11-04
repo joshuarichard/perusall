@@ -1,8 +1,8 @@
 # Perusall Collaborative Reading App
 
-A full-stack collaborative reading application where college instructors can assign readings and students can discuss them through annotations.
+A full-stack collaborative reading application where instructors assign readings and students discuss them through threaded annotations.
 
-Built with TypeScript, React, Redux Toolkit, Styled Components, Vite, Express, and SQLite.
+Built with TypeScript, React, Redux Toolkit, Styled Components, Vite, Express, Prisma, and SQLite.
 
 ## Quick Start
 
@@ -41,14 +41,39 @@ Running `npm run db:setup` populates the database with:
 
 - **2 Instructors**: Dr. Smith, Prof. Johnson
 - **3 Students**: Sarah, Michael, Alex
-- **3 Sample Readings**: covering machine learning, Shakespeare, and climate science
-- **Several annotations**: demonstrating the discussion flow
+- **3 Readings**: machine learning, Shakespeare, and climate science
+- **20 Annotations** with **5 replies** and **5 nested replies** demonstrating threaded discussions
 
 To reset the database at any time:
 
 ```bash
 npm run db:reset
 ```
+
+## Features
+
+### For Students
+
+- Browse and search readings by title
+- View reading details with threaded annotation discussions
+- Post annotations and reply to any annotation (unlimited nesting depth)
+- Edit and delete own annotations with ownership enforcement
+- Filter annotations by author
+
+### For Instructors
+
+- Create new readings with title and description
+- View annotation counts per reading
+- See unique student participation statistics
+- Review all annotations and discussion threads
+
+### UX Details
+
+- Role-based UI — select identity to simulate login
+- Empty state handling for readings, annotations, and search
+- Success/error notifications
+- Annotations displayed in reverse chronological order with nested reply threads
+- Form validation prevents empty submissions
 
 ## Architecture
 
@@ -61,101 +86,69 @@ npm run db:reset
 | **State**        | Redux Toolkit + RTK Query | Eliminates Redux boilerplate, built-in API caching and cache invalidation |
 | **Styling**      | Styled Components         | Scoped CSS-in-JS, theming support, dynamic styles via props               |
 | **Server**       | Express + TypeScript      | Lightweight, familiar, same language as frontend                          |
-| **Database**     | SQLite via Prisma         | Zero-config, file-based, type-safe queries, easy local setup              |
-
-### Project Structure
-
-```
-perusall/
-├── client/                 # React frontend (Vite)
-│   ├── src/
-│   │   ├── app/            # Redux store configuration
-│   │   ├── components/     # Reusable UI components
-│   │   ├── features/       # Feature modules (readings, annotations, auth)
-│   │   ├── pages/          # Route-level page components
-│   │   └── styles/         # Theme + global styles
-│   └── vite.config.ts
-├── server/                 # Express API server
-│   ├── src/
-│   │   ├── data/           # Database client + seed script (barrel: index.ts)
-│   │   ├── routes/         # REST API route handlers (barrel: index.ts)
-│   │   └── types.ts        # Shared TypeScript interfaces
-│   ├── prisma/
-│   │   └── schema.prisma   # Database schema
-│   └── docs/               # API documentation
-└── resources/              # Exercise materials
-```
+| **Database**     | SQLite via Prisma 7       | Zero-config, file-based, type-safe queries, driver adapter pattern        |
 
 ### Data Model
 
 ```
-User (simulated)     Reading              Annotation
+User                 Reading              Annotation
 ┌──────────────┐     ┌──────────────┐     ┌──────────────┐
 │ id           │     │ id           │     │ id           │
 │ name         │     │ title        │     │ readingId  ──┼──→ Reading
 │ role         │     │ description  │     │ authorId   ──┼──→ User
-└──────────────┘     │ createdBy  ──┼──→  │ content      │
-                     │ createdAt    │     │ createdAt    │
-                     └──────────────┘     └──────────────┘
+│ createdAt    │     │ createdBy  ──┼──→  │ parentId   ──┼──→ Annotation (self)
+└──────────────┘     │ createdAt    │     │ content      │
+                     └──────────────┘     │ createdAt    │
+                                          └──────────────┘
 ```
+
+Annotations support unlimited reply depth via the self-referential `parentId` foreign key. The server builds annotation trees from a flat query using an in-memory Map.
 
 ### API Endpoints
 
-| Method | Endpoint                  | Description                              | Role       |
-| ------ | ------------------------- | ---------------------------------------- | ---------- |
-| `GET`  | `/api/users`              | List available users                     | Any        |
-| `GET`  | `/api/readings`           | List all readings with annotation counts | Any        |
-| `POST` | `/api/readings`           | Create a new reading                     | Instructor |
-| `GET`  | `/api/readings/:id`       | Get reading with its annotations         | Any        |
-| `POST` | `/api/annotations`        | Add annotation to a reading              | Student    |
-| `GET`  | `/api/readings/:id/stats` | Reading engagement statistics            | Instructor |
-
-## Features
-
-### For Students
-
-- Browse available readings
-- View reading details and existing annotations
-- Add annotations (comments) to readings
-- See annotations appear instantly without page refresh
-
-### For Instructors
-
-- Create new readings with title and description
-- View annotation counts per reading
-- See unique student participation counts
-- Review all annotations for any reading
-
-### UX Details
-
-- Role-based UI — select identity to simulate login
-- Empty state handling for readings and annotations
-- Success/error toast notifications
-- Annotations displayed in reverse chronological order
-- Form validation prevents empty submissions
+| Method   | Endpoint                  | Description                              | Role       |
+| -------- | ------------------------- | ---------------------------------------- | ---------- |
+| `GET`    | `/api/users`              | List available users                     | Any        |
+| `GET`    | `/api/readings`           | List all readings with annotation counts | Any        |
+| `POST`   | `/api/readings`           | Create a new reading                     | Instructor |
+| `GET`    | `/api/readings/:id`       | Get reading with nested annotation tree  | Any        |
+| `POST`   | `/api/annotations`        | Add annotation or reply to a reading     | Student    |
+| `PATCH`  | `/api/annotations/:id`    | Edit an annotation (owner only)          | Student    |
+| `DELETE` | `/api/annotations/:id`    | Delete an annotation (owner only)        | Student    |
+| `GET`    | `/api/readings/:id/stats` | Reading engagement statistics            | Instructor |
 
 ## Development
 
 ### Available Scripts
 
 ```bash
-npm run dev           # Start both client and server in dev mode
-npm run dev:client    # Start only the Vite dev server
-npm run dev:server    # Start only the Express server
-npm run build         # Build for production
-npm run db:setup      # Run migrations + seed data
-npm run db:reset      # Reset database and re-seed
-npm run db:migrate    # Run Prisma migrations only
-npm run seed          # Seed database only
-npm run typecheck     # TypeScript type checking
-npm run test          # Run all tests (server + client)
-npm run test:server   # Server tests only
-npm run test:client   # Client tests only
+npm run dev              # Start both client and server in dev mode
+npm run dev:client       # Start only the Vite dev server
+npm run dev:server       # Start only the Express server
+npm run build            # Build client for production
+npm run db:setup         # Run migrations + seed data
+npm run db:reset         # Reset database and re-seed
+npm run db:migrate       # Run Prisma migrations only
+npm run seed             # Seed database only
+npm run typecheck        # TypeScript type checking
 ```
 
-## Testing
+### Testing
 
-- **Vitest** for both client and server
-- **Server**: Supertest integration tests with mocked Prisma, colocated next to route files
-- **Client**: React Testing Library + user-event, colocated next to source files
-- 50 tests total (18 server + 32 client)
+```bash
+npm run test             # Run all unit tests (server + client)
+npm run test:server      # Server unit tests only
+npm run test:client      # Client unit tests only
+npm run test:integration # Server integration tests (real SQLite)
+npm run test:e2e         # Playwright E2E tests (requires dev servers)
+```
+
+**Test breakdown:**
+
+| Suite                    | Count   | Framework                | Approach                                          |
+| ------------------------ | ------- | ------------------------ | ------------------------------------------------- |
+| Server unit tests        | 30      | Vitest + Supertest       | Mocked Prisma client, colocated with routes       |
+| Server integration tests | 39      | Vitest + Supertest       | Real temp SQLite databases, full HTTP stack       |
+| Client unit tests        | 59      | Vitest + Testing Library | Component rendering, user interaction, mocked API |
+| E2E tests                | 14      | Playwright               | Browser-based flows against running app           |
+| **Total**                | **142** |                          |                                                   |
