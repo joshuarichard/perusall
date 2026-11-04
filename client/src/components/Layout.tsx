@@ -3,6 +3,7 @@ import { useAppSelector, useAppDispatch } from '../app/hooks';
 import { logout } from '../features/auth/authSlice';
 import { useNavigate, Link } from 'react-router-dom';
 import { useThemeMode } from '../styles';
+import { useTranslation } from '../i18n';
 
 const StyledHeader = styled.header`
   background: ${({ theme }) => theme.colors.surface};
@@ -79,6 +80,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const { mode, toggleTheme } = useThemeMode();
+  const { locale, setLocale, t } = useTranslation();
 
   const handleLogout = () => {
     dispatch(logout());
@@ -88,8 +90,14 @@ export function Layout({ children }: { children: React.ReactNode }) {
   return (
     <>
       <StyledHeader>
-        <StyledLogo to="/readings">Perusall</StyledLogo>
+        <StyledLogo to="/readings">{t('layout.logo')}</StyledLogo>
         <StyledUserInfo>
+          <StyledThemeToggle
+            onClick={() => setLocale(locale === 'en' ? 'es' : 'en')}
+            aria-label="Toggle language"
+          >
+            {locale === 'en' ? 'ES' : 'EN'}
+          </StyledThemeToggle>
           <StyledThemeToggle onClick={toggleTheme} aria-label="Toggle theme">
             {mode === 'light' ? '☾' : '☀'}
           </StyledThemeToggle>
@@ -97,7 +105,9 @@ export function Layout({ children }: { children: React.ReactNode }) {
             <>
               <span>{currentUser.name}</span>
               <StyledRoleBadge $role={currentUser.role}>{currentUser.role}</StyledRoleBadge>
-              <StyledLogoutButton onClick={handleLogout}>Switch User</StyledLogoutButton>
+              <StyledLogoutButton onClick={handleLogout}>
+                {t('layout.switchUser')}
+              </StyledLogoutButton>
             </>
           )}
         </StyledUserInfo>

@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
 import { useAppSelector } from '../app/hooks';
 import { useGetReadingsQuery, useCreateReadingMutation } from '../app/api';
+import { useTranslation } from '../i18n';
 import {
   StyledButton,
   StyledCancelButton,
@@ -60,6 +61,7 @@ export default function ReadingsPage() {
   const currentUser = useAppSelector((state) => state.auth.currentUser);
   const navigate = useNavigate();
   const { data: readings, isLoading, error } = useGetReadingsQuery();
+  const { t } = useTranslation();
   const [createReading, { isLoading: isCreating }] = useCreateReadingMutation();
 
   const [showForm, setShowForm] = useState(false);
@@ -83,7 +85,7 @@ export default function ReadingsPage() {
     setFormError('');
 
     if (!title.trim() || !description.trim()) {
-      setFormError('Both title and description are required.');
+      setFormError(t('readings.formError'));
       return;
     }
 
@@ -97,22 +99,22 @@ export default function ReadingsPage() {
       setTitle('');
       setDescription('');
       setShowForm(false);
-      setSuccessMessage('Reading created successfully!');
+      setSuccessMessage(t('readings.createdSuccess'));
       setTimeout(() => setSuccessMessage(''), 3000);
     } catch {
-      setFormError('Failed to create reading. Please try again.');
+      setFormError(t('readings.createError'));
     }
   };
 
-  if (isLoading) return <p>Loading readings...</p>;
-  if (error) return <p>Failed to load readings.</p>;
+  if (isLoading) return <p>{t('readings.loading')}</p>;
+  if (error) return <p>{t('readings.loadError')}</p>;
 
   return (
     <>
       <StyledPageHeader>
-        <StyledPageTitle>Readings</StyledPageTitle>
+        <StyledPageTitle>{t('readings.title')}</StyledPageTitle>
         {isInstructor && !showForm && (
-          <StyledButton onClick={() => setShowForm(true)}>+ New Reading</StyledButton>
+          <StyledButton onClick={() => setShowForm(true)}>{t('readings.newReading')}</StyledButton>
         )}
       </StyledPageHeader>
 
@@ -121,7 +123,7 @@ export default function ReadingsPage() {
       {readings && readings.length > 0 && (
         <StyledSearchInput
           type="text"
-          placeholder="Search readings by title..."
+          placeholder={t('readings.searchPlaceholder')}
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
         />
@@ -129,26 +131,26 @@ export default function ReadingsPage() {
 
       {showForm && isInstructor && (
         <StyledForm onSubmit={handleSubmit}>
-          <StyledFormTitle>Create New Reading</StyledFormTitle>
+          <StyledFormTitle>{t('readings.createTitle')}</StyledFormTitle>
           {formError && <StyledErrorMessage>{formError}</StyledErrorMessage>}
           <StyledInput
             type="text"
-            placeholder="Reading title"
+            placeholder={t('readings.titlePlaceholder')}
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             autoFocus
           />
           <StyledTextarea
-            placeholder="Reading description"
+            placeholder={t('readings.descriptionPlaceholder')}
             value={description}
             onChange={(e) => setDescription(e.target.value)}
           />
           <StyledFormActions>
             <StyledCancelButton type="button" onClick={() => setShowForm(false)}>
-              Cancel
+              {t('readings.cancel')}
             </StyledCancelButton>
             <StyledButton type="submit" disabled={isCreating}>
-              {isCreating ? 'Creating...' : 'Create Reading'}
+              {isCreating ? t('readings.creating') : t('readings.create')}
             </StyledButton>
           </StyledFormActions>
         </StyledForm>
@@ -158,11 +160,11 @@ export default function ReadingsPage() {
         <StyledEmptyState>
           {readings?.length === 0 ? (
             <>
-              <p>No readings yet.</p>
-              {isInstructor && <p>Create your first reading to get started.</p>}
+              <p>{t('readings.empty')}</p>
+              {isInstructor && <p>{t('readings.emptyInstructor')}</p>}
             </>
           ) : (
-            <p>No readings match your search.</p>
+            <p>{t('readings.noMatch')}</p>
           )}
         </StyledEmptyState>
       ) : (
@@ -171,9 +173,11 @@ export default function ReadingsPage() {
             <StyledReadingTitle>{reading.title}</StyledReadingTitle>
             <StyledReadingDescription>{reading.description}</StyledReadingDescription>
             <StyledReadingMeta>
-              <span>By {reading.creator.name}</span>
+              <span>{t('readings.by', { name: reading.creator.name })}</span>
               <span>
-                {reading._count.annotations} annotation{reading._count.annotations !== 1 ? 's' : ''}
+                {reading._count.annotations !== 1
+                  ? t('readings.annotationCountPlural', { count: reading._count.annotations })
+                  : t('readings.annotationCount', { count: reading._count.annotations })}
               </span>
               <span>{new Date(reading.createdAt).toLocaleDateString()}</span>
             </StyledReadingMeta>

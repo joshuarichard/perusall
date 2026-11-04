@@ -92,7 +92,7 @@ npm run db:reset
 | # | Enhancement | Status |
 |---|-------------|--------|
 | 1 | **Dark Mode** — System preference detection, manual toggle, localStorage persistence | :white_check_mark: |
-| 2 | **Internationalization (i18n)** — Multi-language support | :black_square_button: |
+| 2 | **Internationalization (i18n)** — Multi-language support (English/Spanish), browser detection, localStorage persistence | :white_check_mark: |
 
 ### For Students
 
@@ -113,6 +113,7 @@ npm run db:reset
 
 - Role-based UI — select identity to simulate login
 - Dark mode with system preference detection and manual toggle (persisted in localStorage)
+- Internationalization (i18n) with English and Spanish, browser language detection, and manual toggle (persisted in localStorage)
 - Empty state handling for readings, annotations, and search
 - Success/error notifications
 - Annotations displayed in reverse chronological order with nested reply threads

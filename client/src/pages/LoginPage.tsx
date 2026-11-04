@@ -4,6 +4,7 @@ import { useGetUsersQuery } from '../app/api';
 import type { User } from '../app/types';
 import { useAppDispatch } from '../app/hooks';
 import { setCurrentUser } from '../features/auth/authSlice';
+import { useTranslation } from '../i18n';
 
 const StyledContainer = styled.div`
   display: flex;
@@ -79,25 +80,26 @@ export default function LoginPage() {
   const { data: users, isLoading, error } = useGetUsersQuery();
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   const handleSelectUser = (user: User) => {
     dispatch(setCurrentUser(user));
     navigate('/readings');
   };
 
-  if (isLoading) return <StyledContainer>Loading users...</StyledContainer>;
-  if (error) return <StyledContainer>Failed to load users. Is the server running?</StyledContainer>;
+  if (isLoading) return <StyledContainer>{t('login.loading')}</StyledContainer>;
+  if (error) return <StyledContainer>{t('login.error')}</StyledContainer>;
 
   const instructors = users?.filter((u) => u.role === 'instructor') ?? [];
   const students = users?.filter((u) => u.role === 'student') ?? [];
 
   return (
     <StyledContainer>
-      <StyledTitle>Perusall</StyledTitle>
-      <StyledSubtitle>Select your identity to get started</StyledSubtitle>
+      <StyledTitle>{t('login.title')}</StyledTitle>
+      <StyledSubtitle>{t('login.subtitle')}</StyledSubtitle>
 
       <StyledSection>
-        <StyledSectionTitle>Instructors</StyledSectionTitle>
+        <StyledSectionTitle>{t('login.instructors')}</StyledSectionTitle>
         <StyledUserGrid>
           {instructors.map((user) => (
             <StyledUserCard key={user.id} onClick={() => handleSelectUser(user)}>
@@ -109,7 +111,7 @@ export default function LoginPage() {
       </StyledSection>
 
       <StyledSection>
-        <StyledSectionTitle>Students</StyledSectionTitle>
+        <StyledSectionTitle>{t('login.students')}</StyledSectionTitle>
         <StyledUserGrid>
           {students.map((user) => (
             <StyledUserCard key={user.id} onClick={() => handleSelectUser(user)}>

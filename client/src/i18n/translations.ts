@@ -1,0 +1,141 @@
+type Translations = Record<string, string>;
+
+export type Locale = 'en' | 'es';
+
+export const translations: Record<Locale, Translations> = {
+  en: {
+    // Login
+    'login.title': 'Perusall',
+    'login.subtitle': 'Select your identity to get started',
+    'login.instructors': 'Instructors',
+    'login.students': 'Students',
+    'login.loading': 'Loading users...',
+    'login.error': 'Failed to load users. Is the server running?',
+
+    // Layout
+    'layout.logo': 'Perusall',
+    'layout.switchUser': 'Switch User',
+
+    // Readings
+    'readings.title': 'Readings',
+    'readings.newReading': '+ New Reading',
+    'readings.searchPlaceholder': 'Search readings by title...',
+    'readings.createTitle': 'Create New Reading',
+    'readings.titlePlaceholder': 'Reading title',
+    'readings.descriptionPlaceholder': 'Reading description',
+    'readings.creating': 'Creating...',
+    'readings.create': 'Create Reading',
+    'readings.cancel': 'Cancel',
+    'readings.loading': 'Loading readings...',
+    'readings.loadError': 'Failed to load readings.',
+    'readings.empty': 'No readings yet.',
+    'readings.emptyInstructor': 'Create your first reading to get started.',
+    'readings.noMatch': 'No readings match your search.',
+    'readings.createdSuccess': 'Reading created successfully!',
+    'readings.createError': 'Failed to create reading. Please try again.',
+    'readings.formError': 'Both title and description are required.',
+    'readings.by': 'By {{name}}',
+    'readings.annotationCount': '{{count}} annotation',
+    'readings.annotationCountPlural': '{{count}} annotations',
+
+    // Reading detail
+    'detail.loading': 'Loading reading...',
+    'detail.notFound': 'Reading not found.',
+    'detail.backToReadings': 'Back to Readings',
+    'detail.assignedBy': 'Assigned by {{name}}',
+    'detail.annotations': 'Annotations',
+    'detail.studentsParticipating': 'Students Participating',
+    'detail.allStudents': 'All students',
+    'detail.discussion': 'Discussion',
+    'detail.sharePlaceholder': 'Share your thoughts on this reading...',
+    'detail.posting': 'Posting...',
+    'detail.post': 'Post',
+    'detail.emptyAnnotations': 'No annotations yet.',
+    'detail.beFirst': 'Be the first to share your thoughts!',
+    'detail.noAnnotationsFromStudent': 'No annotations from this student.',
+    'detail.annotationEmpty': 'Annotation cannot be empty.',
+    'detail.postError': 'Failed to post annotation. Please try again.',
+
+    // Annotation actions
+    'annotation.saving': 'Saving...',
+    'annotation.save': 'Save',
+    'annotation.cancel': 'Cancel',
+    'annotation.deleteConfirm': 'Delete?',
+    'annotation.deleting': 'Deleting...',
+    'annotation.yes': 'Yes',
+    'annotation.no': 'No',
+    'annotation.edit': 'Edit',
+    'annotation.delete': 'Delete',
+    'annotation.reply': 'Reply',
+    'annotation.replyTo': 'Reply to {{name}}...',
+    'annotation.replyPosting': 'Posting...',
+  },
+
+  es: {
+    // Login
+    'login.title': 'Perusall',
+    'login.subtitle': 'Selecciona tu identidad para comenzar',
+    'login.instructors': 'Instructores',
+    'login.students': 'Estudiantes',
+    'login.loading': 'Cargando usuarios...',
+    'login.error': 'Error al cargar usuarios. ¿Está el servidor en ejecución?',
+
+    // Layout
+    'layout.logo': 'Perusall',
+    'layout.switchUser': 'Cambiar Usuario',
+
+    // Readings
+    'readings.title': 'Lecturas',
+    'readings.newReading': '+ Nueva Lectura',
+    'readings.searchPlaceholder': 'Buscar lecturas por título...',
+    'readings.createTitle': 'Crear Nueva Lectura',
+    'readings.titlePlaceholder': 'Título de la lectura',
+    'readings.descriptionPlaceholder': 'Descripción de la lectura',
+    'readings.creating': 'Creando...',
+    'readings.create': 'Crear Lectura',
+    'readings.cancel': 'Cancelar',
+    'readings.loading': 'Cargando lecturas...',
+    'readings.loadError': 'Error al cargar las lecturas.',
+    'readings.empty': 'No hay lecturas aún.',
+    'readings.emptyInstructor': 'Crea tu primera lectura para comenzar.',
+    'readings.noMatch': 'Ninguna lectura coincide con tu búsqueda.',
+    'readings.createdSuccess': '¡Lectura creada exitosamente!',
+    'readings.createError': 'Error al crear la lectura. Intenta de nuevo.',
+    'readings.formError': 'El título y la descripción son obligatorios.',
+    'readings.by': 'Por {{name}}',
+    'readings.annotationCount': '{{count}} anotación',
+    'readings.annotationCountPlural': '{{count}} anotaciones',
+
+    // Reading detail
+    'detail.loading': 'Cargando lectura...',
+    'detail.notFound': 'Lectura no encontrada.',
+    'detail.backToReadings': 'Volver a Lecturas',
+    'detail.assignedBy': 'Asignado por {{name}}',
+    'detail.annotations': 'Anotaciones',
+    'detail.studentsParticipating': 'Estudiantes Participando',
+    'detail.allStudents': 'Todos los estudiantes',
+    'detail.discussion': 'Discusión',
+    'detail.sharePlaceholder': 'Comparte tus ideas sobre esta lectura...',
+    'detail.posting': 'Publicando...',
+    'detail.post': 'Publicar',
+    'detail.emptyAnnotations': 'No hay anotaciones aún.',
+    'detail.beFirst': '¡Sé el primero en compartir tus ideas!',
+    'detail.noAnnotationsFromStudent': 'No hay anotaciones de este estudiante.',
+    'detail.annotationEmpty': 'La anotación no puede estar vacía.',
+    'detail.postError': 'Error al publicar la anotación. Intenta de nuevo.',
+
+    // Annotation actions
+    'annotation.saving': 'Guardando...',
+    'annotation.save': 'Guardar',
+    'annotation.cancel': 'Cancelar',
+    'annotation.deleteConfirm': '¿Eliminar?',
+    'annotation.deleting': 'Eliminando...',
+    'annotation.yes': 'Sí',
+    'annotation.no': 'No',
+    'annotation.edit': 'Editar',
+    'annotation.delete': 'Eliminar',
+    'annotation.reply': 'Responder',
+    'annotation.replyTo': 'Responder a {{name}}...',
+    'annotation.replyPosting': 'Publicando...',
+  },
+};

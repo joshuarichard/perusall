@@ -5,6 +5,7 @@ import { ThemeProvider } from 'styled-components';
 import { MemoryRouter } from 'react-router-dom';
 import { configureStore } from '@reduxjs/toolkit';
 import { theme } from './styles/theme';
+import { I18nProvider } from './i18n';
 import { api } from './app/api';
 import authReducer from './features/auth/authSlice';
 
@@ -30,7 +31,9 @@ export function renderWithProviders(
     return (
       <Provider store={store}>
         <ThemeProvider theme={theme}>
-          <MemoryRouter initialEntries={[route]}>{children}</MemoryRouter>
+          <I18nProvider>
+            <MemoryRouter initialEntries={[route]}>{children}</MemoryRouter>
+          </I18nProvider>
         </ThemeProvider>
       </Provider>
     );

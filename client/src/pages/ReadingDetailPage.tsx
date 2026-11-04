@@ -10,6 +10,7 @@ import {
   useDeleteAnnotationMutation,
 } from '../app/api';
 import type { Annotation } from '../app/types';
+import { useTranslation } from '../i18n';
 import {
   StyledButton,
   StyledCancelButton,
@@ -268,6 +269,7 @@ function AnnotationCard({
   currentUserId: string | undefined;
   readingId: string;
 }) {
+  const { t } = useTranslation();
   const [isEditing, setIsEditing] = useState(false);
   const [editContent, setEditContent] = useState(annotation.content);
   const [confirmDelete, setConfirmDelete] = useState(false);
@@ -343,10 +345,10 @@ function AnnotationCard({
                   setEditContent(annotation.content);
                 }}
               >
-                Cancel
+                {t('annotation.cancel')}
               </StyledEditCancelButton>
               <StyledSaveButton type="submit" disabled={isSaving || !editContent.trim()}>
-                {isSaving ? 'Saving...' : 'Save'}
+                {isSaving ? t('annotation.saving') : t('annotation.save')}
               </StyledSaveButton>
             </StyledEditActions>
           </StyledEditForm>
@@ -356,12 +358,12 @@ function AnnotationCard({
             <StyledAnnotationActions>
               {confirmDelete ? (
                 <>
-                  <span style={{ fontSize: '0.75rem' }}>Delete?</span>
+                  <span style={{ fontSize: '0.75rem' }}>{t('annotation.deleteConfirm')}</span>
                   <StyledDeleteButton onClick={handleDelete} disabled={isDeleting}>
-                    {isDeleting ? 'Deleting...' : 'Yes'}
+                    {isDeleting ? t('annotation.deleting') : t('annotation.yes')}
                   </StyledDeleteButton>
                   <StyledActionButton onClick={() => setConfirmDelete(false)}>
-                    No
+                    {t('annotation.no')}
                   </StyledActionButton>
                 </>
               ) : (
@@ -369,16 +371,16 @@ function AnnotationCard({
                   {isOwner && (
                     <>
                       <StyledActionButton onClick={() => setIsEditing(true)}>
-                        Edit
+                        {t('annotation.edit')}
                       </StyledActionButton>
                       <StyledDeleteButton onClick={() => setConfirmDelete(true)}>
-                        Delete
+                        {t('annotation.delete')}
                       </StyledDeleteButton>
                     </>
                   )}
                   {isStudent && !isReplying && (
                     <StyledActionButton onClick={() => setIsReplying(true)}>
-                      Reply
+                      {t('annotation.reply')}
                     </StyledActionButton>
                   )}
                 </>
@@ -391,7 +393,7 @@ function AnnotationCard({
       {isReplying && (
         <StyledReplyForm onSubmit={handleReply}>
           <StyledReplyInput
-            placeholder={`Reply to ${annotation.author.name}...`}
+            placeholder={t('annotation.replyTo', { name: annotation.author.name })}
             value={replyContent}
             onChange={(e) => setReplyContent(e.target.value)}
           />
@@ -400,7 +402,7 @@ function AnnotationCard({
               type="submit"
               disabled={isSubmittingReply || !replyContent.trim()}
             >
-              {isSubmittingReply ? 'Posting...' : 'Reply'}
+              {isSubmittingReply ? t('annotation.replyPosting') : t('annotation.reply')}
             </StyledReplySubmitButton>
             <StyledCancelButton
               type="button"
@@ -409,7 +411,7 @@ function AnnotationCard({
                 setReplyContent('');
               }}
             >
-              Cancel
+              {t('annotation.cancel')}
             </StyledCancelButton>
           </StyledReplyActions>
         </StyledReplyForm>
@@ -440,6 +442,7 @@ export default function ReadingDetailPage() {
   const { data: stats } = useGetReadingStatsQuery(id!);
   const [createAnnotation, { isLoading: isSubmitting }] = useCreateAnnotationMutation();
 
+  const { t } = useTranslation();
   const [content, setContent] = useState('');
   const [formError, setFormError] = useState('');
   const [filterAuthorId, setFilterAuthorId] = useState('');
@@ -488,7 +491,7 @@ export default function ReadingDetailPage() {
     setFormError('');
 
     if (!content.trim()) {
-      setFormError('Annotation cannot be empty.');
+      setFormError(t('detail.annotationEmpty'));
       return;
     }
 
@@ -500,22 +503,22 @@ export default function ReadingDetailPage() {
       }).unwrap();
       setContent('');
     } catch {
-      setFormError('Failed to post annotation. Please try again.');
+      setFormError(t('detail.postError'));
     }
   };
 
-  if (isLoading) return <p>Loading reading...</p>;
-  if (error || !reading) return <p>Reading not found.</p>;
+  if (isLoading) return <p>{t('detail.loading')}</p>;
+  if (error || !reading) return <p>{t('detail.notFound')}</p>;
 
   return (
     <>
-      <StyledBackLink to="/readings">&larr; Back to Readings</StyledBackLink>
+      <StyledBackLink to="/readings">&larr; {t('detail.backToReadings')}</StyledBackLink>
 
       <StyledReadingHeader>
         <StyledTitle>{reading.title}</StyledTitle>
         <StyledDescription>{reading.description}</StyledDescription>
         <StyledMeta>
-          Assigned by {reading.creator.name} &middot;{' '}
+          {t('detail.assignedBy', { name: reading.creator.name })} &middot;{' '}
           {new Date(reading.createdAt).toLocaleDateString()}
         </StyledMeta>
       </StyledReadingHeader>
@@ -524,11 +527,11 @@ export default function ReadingDetailPage() {
         <StyledStatsBar>
           <StyledStat>
             <StyledStatValue>{stats.annotationCount}</StyledStatValue>
-            <StyledStatLabel>Annotations</StyledStatLabel>
+            <StyledStatLabel>{t('detail.annotations')}</StyledStatLabel>
           </StyledStat>
           <StyledStat>
             <StyledStatValue>{stats.uniqueStudents}</StyledStatValue>
-            <StyledStatLabel>Students Participating</StyledStatLabel>
+            <StyledStatLabel>{t('detail.studentsParticipating')}</StyledStatLabel>
           </StyledStat>
         </StyledStatsBar>
       )}
@@ -536,7 +539,7 @@ export default function ReadingDetailPage() {
       <StyledAnnotationsSection>
         <StyledSectionHeader>
           <StyledSectionTitle>
-            Discussion ({filteredCount}
+            {t('detail.discussion')} ({filteredCount}
             {filterAuthorId && ` of ${totalAnnotationCount}`})
           </StyledSectionTitle>
           {totalAnnotationCount > 0 && (
@@ -544,7 +547,7 @@ export default function ReadingDetailPage() {
               value={filterAuthorId}
               onChange={(e) => setFilterAuthorId(e.target.value)}
             >
-              <option value="">All students</option>
+              <option value="">{t('detail.allStudents')}</option>
               {uniqueAuthors.map((author) => (
                 <option key={author.id} value={author.id}>
                   {author.name}
@@ -559,12 +562,12 @@ export default function ReadingDetailPage() {
             {formError && <StyledErrorMessage>{formError}</StyledErrorMessage>}
             <StyledAnnotationForm onSubmit={handleSubmit}>
               <StyledAnnotationInput
-                placeholder="Share your thoughts on this reading..."
+                placeholder={t('detail.sharePlaceholder')}
                 value={content}
                 onChange={(e) => setContent(e.target.value)}
               />
               <StyledSubmitButton type="submit" disabled={isSubmitting}>
-                {isSubmitting ? 'Posting...' : 'Post'}
+                {isSubmitting ? t('detail.posting') : t('detail.post')}
               </StyledSubmitButton>
             </StyledAnnotationForm>
           </>
@@ -574,11 +577,11 @@ export default function ReadingDetailPage() {
           <StyledEmptyStateCard>
             {reading.annotations.length === 0 ? (
               <>
-                <p>No annotations yet.</p>
-                {isStudent && <p>Be the first to share your thoughts!</p>}
+                <p>{t('detail.emptyAnnotations')}</p>
+                {isStudent && <p>{t('detail.beFirst')}</p>}
               </>
             ) : (
-              <p>No annotations from this student.</p>
+              <p>{t('detail.noAnnotationsFromStudent')}</p>
             )}
           </StyledEmptyStateCard>
         ) : (

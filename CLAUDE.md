@@ -30,6 +30,7 @@ perusall/
 │   ├── app/              # Redux store + RTK Query API (api.ts, hooks.ts, types.ts)
 │   ├── components/       # Reusable UI primitives (barrel: index.ts)
 │   ├── features/auth/    # Auth slice (user selection, no real auth)
+│   ├── i18n/             # I18n context, translations, hook (barrel: index.ts)
 │   ├── pages/            # Route-level pages + colocated tests
 │   └── styles/           # Theme, dark mode, global styles (barrel: index.ts)
 ├── server/src/
@@ -54,6 +55,7 @@ perusall/
 - `type` aliases over `interface` for all type definitions
 - Shared wire types live in `shared/types.ts`; client re-exports via `@shared` alias
 - Dark mode via `ThemeContext` with localStorage persistence + `prefers-color-scheme` fallback
+- i18n via `I18nContext` with `useTranslation` hook; translations in `i18n/translations.ts`; localStorage persistence + `navigator.language` fallback
 - Extensionless local imports (no `.js` suffixes)
 - Comments explain _why_, not _what_
 - Error boundaries at route level
