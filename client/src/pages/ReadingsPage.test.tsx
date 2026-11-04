@@ -228,4 +228,85 @@ describe('ReadingsPage', () => {
     await user.click(screen.getByText('Cancel'));
     expect(screen.queryByText('Create New Reading')).not.toBeInTheDocument();
   });
+
+  it('shows search input when readings exist', () => {
+    vi.mocked(apiModule.useGetReadingsQuery).mockReturnValue({
+      data: mockReadings,
+      isLoading: false,
+      error: undefined,
+    } as any);
+
+    renderWithProviders(<ReadingsPage />, {
+      preloadedState: { auth: { currentUser: mockStudent } },
+    });
+
+    expect(screen.getByPlaceholderText(/search readings/i)).toBeInTheDocument();
+  });
+
+  it('hides search input when no readings', () => {
+    vi.mocked(apiModule.useGetReadingsQuery).mockReturnValue({
+      data: [],
+      isLoading: false,
+      error: undefined,
+    } as any);
+
+    renderWithProviders(<ReadingsPage />, {
+      preloadedState: { auth: { currentUser: mockStudent } },
+    });
+
+    expect(screen.queryByPlaceholderText(/search readings/i)).not.toBeInTheDocument();
+  });
+
+  it('filters readings by title', async () => {
+    vi.mocked(apiModule.useGetReadingsQuery).mockReturnValue({
+      data: mockReadings,
+      isLoading: false,
+      error: undefined,
+    } as any);
+
+    const user = userEvent.setup();
+    renderWithProviders(<ReadingsPage />, {
+      preloadedState: { auth: { currentUser: mockStudent } },
+    });
+
+    await user.type(screen.getByPlaceholderText(/search readings/i), 'machine');
+
+    expect(screen.getByText('Introduction to Machine Learning')).toBeInTheDocument();
+    expect(screen.queryByText('Shakespeare Analysis')).not.toBeInTheDocument();
+  });
+
+  it('shows empty search state when no matches', async () => {
+    vi.mocked(apiModule.useGetReadingsQuery).mockReturnValue({
+      data: mockReadings,
+      isLoading: false,
+      error: undefined,
+    } as any);
+
+    const user = userEvent.setup();
+    renderWithProviders(<ReadingsPage />, {
+      preloadedState: { auth: { currentUser: mockStudent } },
+    });
+
+    await user.type(screen.getByPlaceholderText(/search readings/i), 'zzzzz');
+
+    expect(screen.getByText('No readings match your search.')).toBeInTheDocument();
+  });
+
+  it('search is case-insensitive', async () => {
+    vi.mocked(apiModule.useGetReadingsQuery).mockReturnValue({
+      data: mockReadings,
+      isLoading: false,
+      error: undefined,
+    } as any);
+
+    const user = userEvent.setup();
+    renderWithProviders(<ReadingsPage />, {
+      preloadedState: { auth: { currentUser: mockStudent } },
+    });
+
+    await user.type(screen.getByPlaceholderText(/search readings/i), 'SHAKESPEARE');
+
+    expect(screen.getByText('Shakespeare Analysis')).toBeInTheDocument();
+    expect(screen.queryByText('Introduction to Machine Learning')).not.toBeInTheDocument();
+  });
 });

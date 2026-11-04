@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
 import { useAppSelector } from '../app/hooks';
@@ -151,6 +151,21 @@ const StyledErrorMessage = styled.p`
   margin-bottom: ${({ theme }) => theme.spacing.md};
 `;
 
+const StyledSearchInput = styled.input`
+  width: 100%;
+  padding: ${({ theme }) => theme.spacing.sm} ${({ theme }) => theme.spacing.md};
+  border: 1px solid ${({ theme }) => theme.colors.border};
+  border-radius: ${({ theme }) => theme.borderRadius.md};
+  font-size: ${({ theme }) => theme.fontSize.base};
+  margin-bottom: ${({ theme }) => theme.spacing.lg};
+
+  &:focus {
+    outline: none;
+    border-color: ${({ theme }) => theme.colors.borderFocus};
+    box-shadow: 0 0 0 3px ${({ theme }) => theme.colors.primaryLight};
+  }
+`;
+
 const StyledSuccessMessage = styled.div`
   background: #ecfdf5;
   color: ${({ theme }) => theme.colors.success};
@@ -171,8 +186,16 @@ export default function ReadingsPage() {
   const [description, setDescription] = useState('');
   const [formError, setFormError] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
+  const [searchQuery, setSearchQuery] = useState('');
 
   const isInstructor = currentUser?.role === 'instructor';
+
+  const filteredReadings = useMemo(() => {
+    if (!readings) return [];
+    if (!searchQuery.trim()) return readings;
+    const query = searchQuery.toLowerCase();
+    return readings.filter((r) => r.title.toLowerCase().includes(query));
+  }, [readings, searchQuery]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -214,6 +237,15 @@ export default function ReadingsPage() {
 
       {successMessage && <StyledSuccessMessage>{successMessage}</StyledSuccessMessage>}
 
+      {readings && readings.length > 0 && (
+        <StyledSearchInput
+          type="text"
+          placeholder="Search readings by title..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+        />
+      )}
+
       {showForm && isInstructor && (
         <StyledForm onSubmit={handleSubmit}>
           <StyledFormTitle>Create New Reading</StyledFormTitle>
@@ -241,13 +273,19 @@ export default function ReadingsPage() {
         </StyledForm>
       )}
 
-      {readings?.length === 0 ? (
+      {filteredReadings.length === 0 ? (
         <StyledEmptyState>
-          <p>No readings yet.</p>
-          {isInstructor && <p>Create your first reading to get started.</p>}
+          {readings?.length === 0 ? (
+            <>
+              <p>No readings yet.</p>
+              {isInstructor && <p>Create your first reading to get started.</p>}
+            </>
+          ) : (
+            <p>No readings match your search.</p>
+          )}
         </StyledEmptyState>
       ) : (
-        readings?.map((reading) => (
+        filteredReadings.map((reading) => (
           <StyledReadingCard key={reading.id} onClick={() => navigate(`/readings/${reading.id}`)}>
             <StyledReadingTitle>{reading.title}</StyledReadingTitle>
             <StyledReadingDescription>{reading.description}</StyledReadingDescription>
