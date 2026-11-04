@@ -13,6 +13,7 @@ globs: **/*.{ts,tsx}
 - Extensionless local imports (no `.js` suffixes)
 - Shared wire types live in `shared/types.ts`; client re-exports via `@shared` alias
 - Enforce type-only imports using `import type { ... }` for clean compilation boundaries
+- Server request body types derived from Zod schemas via `z.infer<>` — don't duplicate as manual interfaces
 
 ## React
 

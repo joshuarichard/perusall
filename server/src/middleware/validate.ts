@@ -1,0 +1,15 @@
+import type { Request, Response, NextFunction } from 'express';
+import type { z } from 'zod';
+
+export function validate(schema: z.ZodType) {
+  return (req: Request, res: Response, next: NextFunction) => {
+    const result = schema.safeParse(req.body);
+    if (!result.success) {
+      const firstIssue = result.error.issues[0];
+      res.status(400).json({ error: firstIssue.message });
+      return;
+    }
+    req.body = result.data;
+    next();
+  };
+}

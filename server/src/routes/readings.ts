@@ -1,7 +1,8 @@
 import { Router, type Request, type Response } from 'express';
 import { prisma } from '../data';
-import { Errors } from '../types';
+import { Errors, CreateReadingSchema, DeleteReadingSchema } from '../types';
 import type { ApiError, CreateReadingBody, DeleteReadingBody } from '../types';
+import { validate } from '../middleware/validate';
 
 export const readingsRouter = Router();
 
@@ -48,27 +49,27 @@ readingsRouter.get('/:id', async (req: Request<{ id: string }>, res: Response) =
   res.json({ ...reading, annotations: roots });
 });
 
-readingsRouter.post('/', async (req: Request<{}, unknown, CreateReadingBody>, res: Response) => {
-  const { title, description, createdBy } = req.body;
+readingsRouter.post(
+  '/',
+  validate(CreateReadingSchema),
+  async (req: Request<{}, unknown, CreateReadingBody>, res: Response) => {
+    const { title, description, createdBy } = req.body;
 
-  if (!title?.trim() || !description?.trim()) {
-    res.status(400).json({ error: Errors.TITLE_AND_DESCRIPTION_REQUIRED });
-    return;
-  }
+    const reading = await prisma.reading.create({
+      data: { title, description, createdBy },
+      include: {
+        creator: true,
+        _count: { select: { annotations: true } },
+      },
+    });
 
-  const reading = await prisma.reading.create({
-    data: { title: title.trim(), description: description.trim(), createdBy },
-    include: {
-      creator: true,
-      _count: { select: { annotations: true } },
-    },
-  });
-
-  res.status(201).json(reading);
-});
+    res.status(201).json(reading);
+  },
+);
 
 readingsRouter.delete(
   '/:id',
+  validate(DeleteReadingSchema),
   async (req: Request<{ id: string }, unknown, DeleteReadingBody>, res: Response) => {
     const { userId } = req.body;
 

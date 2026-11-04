@@ -19,7 +19,11 @@ globs: server/src/**/*.ts,shared/types.ts,client/src/app/api.ts
 ## Server Routes
 - Express routers in `server/src/routes/`, exported via barrel `index.ts`
 - Registered in `server/src/app.ts`
-- Request body types in `server/src/types.ts`
+- Request body validation via Zod schemas in `server/src/types.ts`
+- Schemas infer TypeScript types via `z.infer<typeof Schema>`
+- Use `validate(schema)` middleware from `server/src/middleware/validate.ts` on mutation routes
+- Business logic errors (404, 403) stay in route handlers; shape validation is in middleware
+- Custom error messages on schemas use `z.string({ error: '...' })` for missing fields and `.min(1, '...')` for empty strings
 
 ## Data Model (Prisma)
 - Schema at `server/prisma/schema.prisma`

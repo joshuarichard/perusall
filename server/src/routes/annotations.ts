@@ -1,24 +1,26 @@
 import { Router, type Request, type Response } from 'express';
 import { prisma } from '../data';
-import { Errors } from '../types';
-import type { ApiError, CreateAnnotationBody, UpdateAnnotationBody } from '../types';
+import {
+  Errors,
+  CreateAnnotationSchema,
+  UpdateAnnotationSchema,
+  DeleteAnnotationSchema,
+} from '../types';
+import type {
+  ApiError,
+  CreateAnnotationBody,
+  UpdateAnnotationBody,
+  DeleteAnnotationBody,
+} from '../types';
+import { validate } from '../middleware/validate';
 
 export const annotationsRouter = Router();
 
 annotationsRouter.post(
   '/',
+  validate(CreateAnnotationSchema),
   async (req: Request<{}, unknown, CreateAnnotationBody>, res: Response) => {
     const { content, readingId, authorId, parentId } = req.body;
-
-    if (!content?.trim()) {
-      res.status(400).json({ error: Errors.ANNOTATION_EMPTY });
-      return;
-    }
-
-    if (!readingId || !authorId) {
-      res.status(400).json({ error: Errors.READING_AND_AUTHOR_REQUIRED });
-      return;
-    }
 
     if (parentId) {
       const parent = await prisma.annotation.findUnique({ where: { id: parentId } });
@@ -34,7 +36,7 @@ annotationsRouter.post(
 
     const annotation = await prisma.annotation.create({
       data: {
-        content: content.trim(),
+        content,
         readingId,
         authorId,
         ...(parentId && { parentId }),
@@ -48,13 +50,9 @@ annotationsRouter.post(
 
 annotationsRouter.patch(
   '/:id',
+  validate(UpdateAnnotationSchema),
   async (req: Request<{ id: string }, unknown, UpdateAnnotationBody>, res: Response) => {
     const { content, authorId } = req.body;
-
-    if (!content?.trim()) {
-      res.status(400).json({ error: Errors.ANNOTATION_EMPTY });
-      return;
-    }
 
     const existing = await prisma.annotation.findUnique({
       where: { id: req.params.id },
@@ -72,7 +70,7 @@ annotationsRouter.patch(
 
     const updated = await prisma.annotation.update({
       where: { id: req.params.id },
-      data: { content: content.trim() },
+      data: { content },
       include: { author: true },
     });
 
@@ -82,8 +80,9 @@ annotationsRouter.patch(
 
 annotationsRouter.delete(
   '/:id',
+  validate(DeleteAnnotationSchema),
   async (
-    req: Request<{ id: string }, { success: true } | ApiError, { authorId: string }>,
+    req: Request<{ id: string }, { success: true } | ApiError, DeleteAnnotationBody>,
     res: Response<{ success: true } | ApiError>,
   ) => {
     const { authorId } = req.body;
