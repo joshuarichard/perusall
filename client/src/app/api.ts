@@ -1,7 +1,21 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
-import type { User, Reading, ReadingDetail, Annotation, ReadingStats } from './types';
+import type {
+  User,
+  Reading,
+  ReadingDetail,
+  Annotation,
+  ReadingStats,
+  DashboardData,
+} from './types';
 
-export type { User, Reading, ReadingDetail, Annotation, ReadingStats } from './types';
+export type {
+  User,
+  Reading,
+  ReadingDetail,
+  Annotation,
+  ReadingStats,
+  DashboardData,
+} from './types';
 
 export const api = createApi({
   baseQuery: fetchBaseQuery({ baseUrl: '/api' }),
@@ -13,6 +27,11 @@ export const api = createApi({
 
     getReadings: builder.query<Reading[], void>({
       query: () => '/readings',
+      providesTags: ['Reading'],
+    }),
+
+    getDashboard: builder.query<DashboardData, void>({
+      query: () => '/dashboard',
       providesTags: ['Reading'],
     }),
 
@@ -88,6 +107,7 @@ export const api = createApi({
 export const {
   useGetUsersQuery,
   useGetReadingsQuery,
+  useGetDashboardQuery,
   useGetReadingQuery,
   useGetReadingStatsQuery,
   useCreateReadingMutation,

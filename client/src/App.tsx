@@ -4,11 +4,18 @@ import { Layout } from './components';
 import LoginPage from './pages/LoginPage';
 import ReadingsPage from './pages/ReadingsPage';
 import ReadingDetailPage from './pages/ReadingDetailPage';
+import DashboardPage from './pages/DashboardPage';
 
-// Redirect to login if no user is selected
 function RequireAuth({ children }: { children: React.ReactNode }) {
   const currentUser = useAppSelector((state) => state.auth.currentUser);
   if (!currentUser) return <Navigate to="/" replace />;
+  return <>{children}</>;
+}
+
+function RequireInstructor({ children }: { children: React.ReactNode }) {
+  const currentUser = useAppSelector((state) => state.auth.currentUser);
+  if (!currentUser) return <Navigate to="/" replace />;
+  if (currentUser.role !== 'instructor') return <Navigate to="/readings" replace />;
   return <>{children}</>;
 }
 
@@ -35,6 +42,16 @@ export function App() {
                 <ReadingDetailPage />
               </Layout>
             </RequireAuth>
+          }
+        />
+        <Route
+          path="/dashboard"
+          element={
+            <RequireInstructor>
+              <Layout>
+                <DashboardPage />
+              </Layout>
+            </RequireInstructor>
           }
         />
       </Routes>

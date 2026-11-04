@@ -44,3 +44,25 @@ export type ReadingStats = {
   annotationCount: number;
   uniqueStudents: number;
 };
+
+export type DashboardData = {
+  summary: {
+    totalReadings: number;
+    totalAnnotations: number;
+    uniqueStudents: number;
+  };
+  readings: {
+    id: string;
+    title: string;
+    annotationCount: number;
+    uniqueStudents: number;
+    lastActivity: string | null;
+    createdAt: string;
+  }[];
+  students: {
+    id: string;
+    name: string;
+    annotationCount: number;
+    readingsParticipated: number;
+  }[];
+};

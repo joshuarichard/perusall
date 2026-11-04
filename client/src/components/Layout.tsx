@@ -14,10 +14,29 @@ const StyledHeader = styled.header`
   align-items: center;
 `;
 
+const StyledNav = styled.nav`
+  display: flex;
+  align-items: center;
+  gap: ${({ theme }) => theme.spacing.md};
+`;
+
 const StyledLogo = styled(Link)`
   display: flex;
   align-items: center;
   text-decoration: none;
+`;
+
+const StyledNavLink = styled(Link)`
+  font-size: ${({ theme }) => theme.fontSize.sm};
+  color: ${({ theme }) => theme.colors.textSecondary};
+  text-decoration: none;
+  padding: ${({ theme }) => theme.spacing.xs} ${({ theme }) => theme.spacing.md};
+  border-radius: ${({ theme }) => theme.borderRadius.md};
+
+  &:hover {
+    color: ${({ theme }) => theme.colors.text};
+    background: ${({ theme }) => theme.colors.background};
+  }
 `;
 
 const StyledLogoImage = styled.img`
@@ -117,9 +136,14 @@ export function Layout({ children }: { children: React.ReactNode }) {
         {t('layout.skipToContent')}
       </a>
       <StyledHeader>
-        <StyledLogo to="/readings">
-          <StyledLogoImage src="/perusall-logo.png" alt="Perusall" />
-        </StyledLogo>
+        <StyledNav>
+          <StyledLogo to="/readings">
+            <StyledLogoImage src="/perusall-logo.png" alt="Perusall" />
+          </StyledLogo>
+          {currentUser?.role === 'instructor' && (
+            <StyledNavLink to="/dashboard">{t('dashboard.nav')}</StyledNavLink>
+          )}
+        </StyledNav>
         <StyledUserInfo>
           <StyledLanguageSelect
             value={locale}
