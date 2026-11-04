@@ -3,7 +3,7 @@ import { useAppSelector, useAppDispatch } from '../app/hooks';
 import { logout } from '../features/auth/authSlice';
 import { useNavigate, Link } from 'react-router-dom';
 import { useThemeMode } from '../styles';
-import { useTranslation } from '../i18n';
+import { useTranslation, type Locale } from '../i18n';
 
 const StyledHeader = styled.header`
   background: ${({ theme }) => theme.colors.surface};
@@ -15,10 +15,14 @@ const StyledHeader = styled.header`
 `;
 
 const StyledLogo = styled(Link)`
-  font-size: ${({ theme }) => theme.fontSize.xl};
-  font-weight: 700;
-  color: ${({ theme }) => theme.colors.primary};
+  display: flex;
+  align-items: center;
   text-decoration: none;
+`;
+
+const StyledLogoImage = styled.img`
+  height: 28px;
+  width: auto;
 `;
 
 const StyledUserInfo = styled.div`
@@ -69,6 +73,25 @@ const StyledThemeToggle = styled.button`
   }
 `;
 
+const StyledLanguageSelect = styled.select`
+  background: none;
+  border: 1px solid ${({ theme }) => theme.colors.border};
+  border-radius: ${({ theme }) => theme.borderRadius.md};
+  padding: ${({ theme }) => theme.spacing.xs} ${({ theme }) => theme.spacing.sm};
+  cursor: pointer;
+  font-size: ${({ theme }) => theme.fontSize.sm};
+  color: ${({ theme }) => theme.colors.textSecondary};
+
+  &:hover {
+    background: ${({ theme }) => theme.colors.background};
+  }
+
+  &:focus {
+    outline: none;
+    border-color: ${({ theme }) => theme.colors.borderFocus};
+  }
+`;
+
 const StyledMain = styled.main`
   max-width: 960px;
   margin: 0 auto;
@@ -90,21 +113,27 @@ export function Layout({ children }: { children: React.ReactNode }) {
   return (
     <>
       <StyledHeader>
-        <StyledLogo to="/readings">{t('layout.logo')}</StyledLogo>
+        <StyledLogo to="/readings">
+          <StyledLogoImage src="/perusall-logo.png" alt="Perusall" />
+        </StyledLogo>
         <StyledUserInfo>
-          <StyledThemeToggle
-            onClick={() => setLocale(locale === 'en' ? 'es' : 'en')}
-            aria-label="Toggle language"
+          <StyledLanguageSelect
+            value={locale}
+            onChange={(e) => setLocale(e.target.value as Locale)}
+            aria-label="Select language"
           >
-            {locale === 'en' ? 'ES' : 'EN'}
-          </StyledThemeToggle>
+            <option value="en">EN</option>
+            <option value="es">ES</option>
+          </StyledLanguageSelect>
           <StyledThemeToggle onClick={toggleTheme} aria-label="Toggle theme">
             {mode === 'light' ? '☾' : '☀'}
           </StyledThemeToggle>
           {currentUser && (
             <>
               <span>{currentUser.name}</span>
-              <StyledRoleBadge $role={currentUser.role}>{currentUser.role}</StyledRoleBadge>
+              <StyledRoleBadge $role={currentUser.role}>
+                {t(`role.${currentUser.role}`)}
+              </StyledRoleBadge>
               <StyledLogoutButton onClick={handleLogout}>
                 {t('layout.switchUser')}
               </StyledLogoutButton>

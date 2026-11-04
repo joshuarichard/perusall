@@ -5,7 +5,6 @@ export type Locale = 'en' | 'es';
 export const translations: Record<Locale, Translations> = {
   en: {
     // Login
-    'login.title': 'Perusall',
     'login.subtitle': 'Select your identity to get started',
     'login.instructors': 'Instructors',
     'login.students': 'Students',
@@ -13,8 +12,9 @@ export const translations: Record<Locale, Translations> = {
     'login.error': 'Failed to load users. Is the server running?',
 
     // Layout
-    'layout.logo': 'Perusall',
     'layout.switchUser': 'Switch User',
+    'role.instructor': 'Instructor',
+    'role.student': 'Student',
 
     // Readings
     'readings.title': 'Readings',
@@ -73,7 +73,6 @@ export const translations: Record<Locale, Translations> = {
 
   es: {
     // Login
-    'login.title': 'Perusall',
     'login.subtitle': 'Selecciona tu identidad para comenzar',
     'login.instructors': 'Instructores',
     'login.students': 'Estudiantes',
@@ -81,8 +80,9 @@ export const translations: Record<Locale, Translations> = {
     'login.error': 'Error al cargar usuarios. ¿Está el servidor en ejecución?',
 
     // Layout
-    'layout.logo': 'Perusall',
     'layout.switchUser': 'Cambiar Usuario',
+    'role.instructor': 'Instructor',
+    'role.student': 'Estudiante',
 
     // Readings
     'readings.title': 'Lecturas',

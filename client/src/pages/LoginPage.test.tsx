@@ -92,6 +92,6 @@ describe('LoginPage', () => {
     } as any);
 
     renderWithProviders(<LoginPage />);
-    expect(screen.getByText('Perusall')).toBeInTheDocument();
+    expect(screen.getByAltText('Perusall')).toBeInTheDocument();
   });
 });

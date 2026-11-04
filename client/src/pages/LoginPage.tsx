@@ -15,9 +15,9 @@ const StyledContainer = styled.div`
   padding: ${({ theme }) => theme.spacing.xl};
 `;
 
-const StyledTitle = styled.h1`
-  font-size: ${({ theme }) => theme.fontSize.xxxl};
-  color: ${({ theme }) => theme.colors.primary};
+const StyledLogo = styled.img`
+  height: 48px;
+  width: auto;
   margin-bottom: ${({ theme }) => theme.spacing.sm};
 `;
 
@@ -95,7 +95,7 @@ export default function LoginPage() {
 
   return (
     <StyledContainer>
-      <StyledTitle>{t('login.title')}</StyledTitle>
+      <StyledLogo src="/perusall-logo.png" alt="Perusall" />
       <StyledSubtitle>{t('login.subtitle')}</StyledSubtitle>
 
       <StyledSection>
