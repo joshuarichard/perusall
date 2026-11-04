@@ -1,26 +1,26 @@
-export type CreateReadingBody = {
+export interface CreateReadingBody {
   title: string;
   description: string;
   createdBy: string;
-};
+}
 
-export type DeleteReadingBody = {
+export interface DeleteReadingBody {
   userId: string;
-};
+}
 
-export type UpdateAnnotationBody = {
+export interface UpdateAnnotationBody {
   content: string;
   authorId: string;
-};
+}
 
-export type CreateAnnotationBody = UpdateAnnotationBody & {
+export interface CreateAnnotationBody extends UpdateAnnotationBody {
   readingId: string;
   parentId?: string;
-};
+}
 
-export type ApiError = {
+export interface ApiError {
   error: string;
-};
+}
 
 export const Errors = {
   READING_NOT_FOUND: 'Reading not found',

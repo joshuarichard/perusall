@@ -102,13 +102,13 @@ const StyledReplySubmitButton = styled(StyledButton)`
   padding: ${({ theme }) => theme.spacing.md} ${({ theme }) => theme.spacing.lg};
 `;
 
-type AnnotationCardProps = {
+interface AnnotationCardProps {
   annotation: Annotation;
   isOwner: boolean;
   isStudent: boolean;
   currentUserId: string | undefined;
   readingId: string;
-};
+}
 
 export function AnnotationCard({
   annotation,

@@ -1,31 +1,31 @@
 // Shared types used by both client and server.
 // createdAt is string because JSON serialization converts Date to ISO string.
 
-export type User = {
+export interface User {
   id: string;
   name: string;
   role: 'instructor' | 'student';
   createdAt: string;
-};
+}
 
-type ReadingBase = {
+interface ReadingBase {
   id: string;
   title: string;
   description: string;
   createdBy: string;
   createdAt: string;
   creator: User;
-};
+}
 
-export type Reading = ReadingBase & {
+export interface Reading extends ReadingBase {
   _count: { annotations: number };
-};
+}
 
-export type ReadingDetail = ReadingBase & {
+export interface ReadingDetail extends ReadingBase {
   annotations: Annotation[];
-};
+}
 
-export type Annotation = {
+export interface Annotation {
   id: string;
   content: string;
   readingId: string;
@@ -34,15 +34,15 @@ export type Annotation = {
   createdAt: string;
   author: User;
   replies?: Annotation[];
-};
+}
 
-export type ReadingStats = {
+export interface ReadingStats {
   readingId: string;
   annotationCount: number;
   uniqueStudents: number;
-};
+}
 
-export type DashboardData = {
+export interface DashboardData {
   summary: {
     totalReadings: number;
     totalAnnotations: number;
@@ -62,4 +62,4 @@ export type DashboardData = {
     annotationCount: number;
     readingsParticipated: number;
   }[];
-};
+}

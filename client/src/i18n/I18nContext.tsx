@@ -1,11 +1,11 @@
 import { createContext, useContext, useState, useCallback, useEffect, type ReactNode } from 'react';
 import { translations, type Locale } from './translations';
 
-type I18nContextValue = {
+interface I18nContextValue {
   locale: Locale;
   setLocale: (locale: Locale) => void;
   t: (key: string, params?: Record<string, string | number>) => string;
-};
+}
 
 const I18nContext = createContext<I18nContextValue>({
   locale: 'en',
