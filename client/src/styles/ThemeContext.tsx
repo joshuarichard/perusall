@@ -4,10 +4,10 @@ import { lightTheme, darkTheme } from './theme';
 
 type ThemeMode = 'light' | 'dark';
 
-interface ThemeContextValue {
+type ThemeContextValue = {
   mode: ThemeMode;
   toggleTheme: () => void;
-}
+};
 
 const ThemeContext = createContext<ThemeContextValue>({
   mode: 'light',

@@ -1,23 +1,23 @@
 // --- Request Bodies (server-only) ---
 
-export interface CreateReadingBody {
+export type CreateReadingBody = {
   title: string;
   description: string;
   createdBy: string;
-}
+};
 
-export interface CreateAnnotationBody {
+export type CreateAnnotationBody = {
   content: string;
   readingId: string;
   authorId: string;
   parentId?: string;
-}
+};
 
-export interface UpdateAnnotationBody {
+export type UpdateAnnotationBody = {
   content: string;
   authorId: string;
-}
+};
 
-export interface ApiError {
+export type ApiError = {
   error: string;
-}
+};
