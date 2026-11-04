@@ -66,6 +66,7 @@ const StyledThemeToggle = styled.button`
   padding: ${({ theme }) => theme.spacing.xs} ${({ theme }) => theme.spacing.sm};
   cursor: pointer;
   font-size: ${({ theme }) => theme.fontSize.base};
+  color: ${({ theme }) => theme.colors.text};
   line-height: 1;
 
   &:hover {
