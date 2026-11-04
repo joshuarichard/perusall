@@ -1,1 +1,8 @@
-export type { User, Reading, ReadingDetail, Annotation, ReadingStats } from '@shared/types';
+export type {
+  User,
+  Reading,
+  ReadingDetail,
+  Annotation,
+  ReadingStats,
+  DashboardData,
+} from '@shared/types';

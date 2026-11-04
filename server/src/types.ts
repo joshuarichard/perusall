@@ -8,16 +8,14 @@ export type DeleteReadingBody = {
   userId: string;
 };
 
-export type CreateAnnotationBody = {
-  content: string;
-  readingId: string;
-  authorId: string;
-  parentId?: string;
-};
-
 export type UpdateAnnotationBody = {
   content: string;
   authorId: string;
+};
+
+export type CreateAnnotationBody = UpdateAnnotationBody & {
+  readingId: string;
+  parentId?: string;
 };
 
 export type ApiError = {

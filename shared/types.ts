@@ -8,23 +8,20 @@ export type User = {
   createdAt: string;
 };
 
-export type Reading = {
+type ReadingBase = {
   id: string;
   title: string;
   description: string;
   createdBy: string;
   createdAt: string;
   creator: User;
+};
+
+export type Reading = ReadingBase & {
   _count: { annotations: number };
 };
 
-export type ReadingDetail = {
-  id: string;
-  title: string;
-  description: string;
-  createdBy: string;
-  createdAt: string;
-  creator: User;
+export type ReadingDetail = ReadingBase & {
   annotations: Annotation[];
 };
 
