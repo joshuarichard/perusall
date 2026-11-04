@@ -73,6 +73,7 @@ describe('GET /api/readings/:id', () => {
           content: 'Great reading!',
           readingId: 'r1',
           authorId: 'stu-1',
+          parentId: null,
           createdAt: '2024-01-16T10:00:00.000Z',
           author: mockStudent,
         },
@@ -83,21 +84,15 @@ describe('GET /api/readings/:id', () => {
     const res = await request(app).get('/api/readings/r1');
 
     expect(res.status).toBe(200);
-    expect(res.body).toEqual(mockReading);
+    expect(res.body.annotations).toHaveLength(1);
+    expect(res.body.annotations[0].replies).toEqual([]);
     expect(prisma.reading.findUnique).toHaveBeenCalledWith({
       where: { id: 'r1' },
       include: {
         creator: true,
         annotations: {
-          where: { parentId: null },
-          include: {
-            author: true,
-            replies: {
-              include: { author: true },
-              orderBy: { createdAt: 'asc' },
-            },
-          },
-          orderBy: { createdAt: 'desc' },
+          include: { author: true },
+          orderBy: { createdAt: 'asc' },
         },
       },
     });
@@ -110,6 +105,56 @@ describe('GET /api/readings/:id', () => {
 
     expect(res.status).toBe(404);
     expect(res.body).toEqual({ error: 'Reading not found' });
+  });
+
+  it('builds nested reply tree from flat annotations', async () => {
+    const mockReading = {
+      id: 'r1',
+      title: 'Test',
+      description: 'Test',
+      createdBy: 'inst-1',
+      createdAt: '2024-01-15T00:00:00.000Z',
+      creator: mockInstructor,
+      annotations: [
+        {
+          id: 'a1',
+          content: 'Top level',
+          readingId: 'r1',
+          authorId: 'stu-1',
+          parentId: null,
+          createdAt: '2024-01-16T10:00:00.000Z',
+          author: mockStudent,
+        },
+        {
+          id: 'a2',
+          content: 'Reply to top',
+          readingId: 'r1',
+          authorId: 'stu-1',
+          parentId: 'a1',
+          createdAt: '2024-01-16T11:00:00.000Z',
+          author: mockStudent,
+        },
+        {
+          id: 'a3',
+          content: 'Reply to reply',
+          readingId: 'r1',
+          authorId: 'stu-1',
+          parentId: 'a2',
+          createdAt: '2024-01-16T12:00:00.000Z',
+          author: mockStudent,
+        },
+      ],
+    };
+    vi.mocked(prisma.reading.findUnique).mockResolvedValue(mockReading as any);
+
+    const res = await request(app).get('/api/readings/r1');
+
+    expect(res.body.annotations).toHaveLength(1);
+    expect(res.body.annotations[0].content).toBe('Top level');
+    expect(res.body.annotations[0].replies).toHaveLength(1);
+    expect(res.body.annotations[0].replies[0].content).toBe('Reply to top');
+    expect(res.body.annotations[0].replies[0].replies).toHaveLength(1);
+    expect(res.body.annotations[0].replies[0].replies[0].content).toBe('Reply to reply');
   });
 });
 

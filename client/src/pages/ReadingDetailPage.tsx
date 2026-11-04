@@ -286,6 +286,7 @@ const StyledReplyForm = styled.form`
   display: flex;
   gap: ${({ theme }) => theme.spacing.sm};
   margin-top: ${({ theme }) => theme.spacing.sm};
+  margin-bottom: ${({ theme }) => theme.spacing.lg};
   margin-left: ${({ theme }) => theme.spacing.xl};
   padding-left: ${({ theme }) => theme.spacing.md};
 `;
@@ -319,8 +320,9 @@ const StyledReplySubmitButton = styled.button`
   color: white;
   border: none;
   border-radius: ${({ theme }) => theme.borderRadius.md};
-  padding: ${({ theme }) => theme.spacing.xs} ${({ theme }) => theme.spacing.md};
-  font-size: ${({ theme }) => theme.fontSize.xs};
+  padding: ${({ theme }) => theme.spacing.md} ${({ theme }) => theme.spacing.lg};
+  font-size: ${({ theme }) => theme.fontSize.sm};
+  font-weight: 500;
   cursor: pointer;
   white-space: nowrap;
 
@@ -526,34 +528,41 @@ export default function ReadingDetailPage() {
   const isStudent = currentUser?.role === 'student';
   const isInstructor = currentUser?.role === 'instructor';
 
+  const collectAuthors = (annotations: Annotation[], seen: Map<string, string>) => {
+    for (const a of annotations) {
+      if (!seen.has(a.author.id)) seen.set(a.author.id, a.author.name);
+      collectAuthors(a.replies ?? [], seen);
+    }
+  };
+
   const uniqueAuthors = useMemo(() => {
     if (!reading) return [];
     const seen = new Map<string, string>();
-    for (const a of reading.annotations) {
-      if (!seen.has(a.author.id)) seen.set(a.author.id, a.author.name);
-      for (const r of a.replies ?? []) {
-        if (!seen.has(r.author.id)) seen.set(r.author.id, r.author.name);
-      }
-    }
+    collectAuthors(reading.annotations, seen);
     return Array.from(seen, ([id, name]) => ({ id, name })).sort((a, b) =>
       a.name.localeCompare(b.name),
     );
   }, [reading]);
 
+  const hasAuthor = (annotation: Annotation, authorId: string): boolean =>
+    annotation.author.id === authorId ||
+    (annotation.replies ?? []).some((r) => hasAuthor(r, authorId));
+
   const filteredAnnotations = useMemo(() => {
     if (!reading) return [];
     if (!filterAuthorId) return reading.annotations;
-    return reading.annotations.filter(
-      (a) =>
-        a.author.id === filterAuthorId ||
-        (a.replies ?? []).some((r) => r.author.id === filterAuthorId),
-    );
+    return reading.annotations.filter((a) => hasAuthor(a, filterAuthorId));
   }, [reading, filterAuthorId]);
+
+  const countAll = (annotations: Annotation[]): number =>
+    annotations.reduce((sum, a) => sum + 1 + countAll(a.replies ?? []), 0);
 
   const totalAnnotationCount = useMemo(() => {
     if (!reading) return 0;
-    return reading.annotations.reduce((sum, a) => sum + 1 + (a.replies?.length ?? 0), 0);
+    return countAll(reading.annotations);
   }, [reading]);
+
+  const filteredCount = useMemo(() => countAll(filteredAnnotations), [filteredAnnotations]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -608,8 +617,8 @@ export default function ReadingDetailPage() {
       <StyledAnnotationsSection>
         <StyledSectionHeader>
           <StyledSectionTitle>
-            Discussion ({filteredAnnotations.length}
-            {filterAuthorId && ` of ${reading.annotations.length}`})
+            Discussion ({filteredCount}
+            {filterAuthorId && ` of ${totalAnnotationCount}`})
           </StyledSectionTitle>
           {totalAnnotationCount > 0 && (
             <StyledFilterSelect

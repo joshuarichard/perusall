@@ -680,6 +680,86 @@ describe('ReadingDetailPage', () => {
     });
   });
 
+  it('discussion count includes replies', () => {
+    vi.mocked(apiModule.useGetReadingQuery).mockReturnValue({
+      data: mockReadingWithReplies,
+      isLoading: false,
+      error: undefined,
+    } as any);
+
+    renderDetailPage(mockStudent);
+
+    // 1 top-level annotation + 1 reply = 2 total
+    expect(screen.getByText('Discussion (2)')).toBeInTheDocument();
+  });
+
+  it('filtered discussion count includes nested replies', async () => {
+    const mockReadingMixed = {
+      ...mockReading,
+      annotations: [
+        {
+          id: 'a1',
+          content: 'Top level by Sarah',
+          readingId: 'r1',
+          authorId: 'stu-1',
+          parentId: null,
+          createdAt: '2024-01-16T10:00:00Z',
+          author: mockStudent,
+          replies: [
+            {
+              id: 'r1',
+              content: 'Reply by Michael',
+              readingId: 'r1',
+              authorId: 'stu-2',
+              parentId: 'a1',
+              createdAt: '2024-01-16T11:00:00Z',
+              author: mockStudent2,
+              replies: [
+                {
+                  id: 'r2',
+                  content: 'Reply-to-reply by Sarah',
+                  readingId: 'r1',
+                  authorId: 'stu-1',
+                  parentId: 'r1',
+                  createdAt: '2024-01-16T12:00:00Z',
+                  author: mockStudent,
+                  replies: [],
+                },
+              ],
+            },
+          ],
+        },
+        {
+          id: 'a2',
+          content: 'Top level by Michael',
+          readingId: 'r1',
+          authorId: 'stu-2',
+          parentId: null,
+          createdAt: '2024-01-16T13:00:00Z',
+          author: mockStudent2,
+          replies: [],
+        },
+      ],
+    };
+
+    vi.mocked(apiModule.useGetReadingQuery).mockReturnValue({
+      data: mockReadingMixed,
+      isLoading: false,
+      error: undefined,
+    } as any);
+
+    const user = userEvent.setup();
+    renderDetailPage(mockStudent);
+
+    // Unfiltered: 2 top-level + 1 reply + 1 reply-to-reply = 4
+    expect(screen.getByText('Discussion (4)')).toBeInTheDocument();
+
+    // Filter by Sarah — thread a1 matches (Sarah at top + nested), thread a2 does not
+    await user.selectOptions(screen.getByRole('combobox'), 'stu-1');
+    // Filtered count: a1 (1) + its reply (1) + reply-to-reply (1) = 3, of 4 total
+    expect(screen.getByText(/3 of 4/)).toBeInTheDocument();
+  });
+
   it('includes reply authors in filter dropdown', () => {
     vi.mocked(apiModule.useGetReadingQuery).mockReturnValue({
       data: mockReadingWithReplies,

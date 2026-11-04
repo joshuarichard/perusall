@@ -245,15 +245,70 @@ async function seed() {
     },
   ];
 
-  for (const r of replies) {
-    await prisma.annotation.create({ data: r });
+  const createdReplies: Record<string, string> = {};
+  for (let i = 0; i < replies.length; i++) {
+    const r = await prisma.annotation.create({ data: replies[i] });
+    createdReplies[`r${i}`] = r.id;
+  }
+
+  // Replies to replies (deeper threads)
+  const deepReplies = [
+    // Reply to Sarah's clustering question (r0) — continuing the ML thread
+    {
+      content:
+        'Yes, and another example is PCA for dimensionality reduction. Also unsupervised since it finds structure without labels.',
+      readingId: mlReading.id,
+      authorId: alex.id,
+      parentId: createdReplies['r0'],
+      createdAt: new Date('2026-10-20T13:00:00Z'),
+    },
+    // Reply to Michael's K-means explanation (r1)
+    {
+      content: 'How do you pick the right number of clusters? Is there a standard method?',
+      readingId: mlReading.id,
+      authorId: sarah.id,
+      parentId: createdReplies['r1'],
+      createdAt: new Date('2026-10-20T14:00:00Z'),
+    },
+    {
+      content:
+        'The elbow method is the most common — you plot the error for different values of k and look for where the curve bends.',
+      readingId: mlReading.id,
+      authorId: michael.id,
+      parentId: createdReplies['r1'],
+      createdAt: new Date('2026-10-20T14:45:00Z'),
+    },
+    // Reply to Michael's Hamlet critique (r3)
+    {
+      content:
+        'That reading also connects to the broader Renaissance anxiety about contemplation vs. action — very Montaigne.',
+      readingId: shakespeareReading.id,
+      authorId: alex.id,
+      parentId: createdReplies['r3'],
+      createdAt: new Date('2026-10-23T16:00:00Z'),
+    },
+    // Reply to Alex's iron fertilization comment (r4)
+    {
+      content:
+        "Agreed — the precautionary principle should apply here. We can't undo large-scale ocean chemistry changes.",
+      readingId: climateReading.id,
+      authorId: sarah.id,
+      parentId: createdReplies['r4'],
+      createdAt: new Date('2026-10-28T15:30:00Z'),
+    },
+  ];
+
+  for (const dr of deepReplies) {
+    await prisma.annotation.create({ data: dr });
   }
 
   console.log('Database seeded successfully!');
   console.log(`  - ${2} instructors`);
   console.log(`  - ${3} students`);
   console.log(`  - ${3} readings`);
-  console.log(`  - ${20} annotations + ${replies.length} replies`);
+  console.log(
+    `  - ${20} annotations + ${replies.length} replies + ${deepReplies.length} nested replies`,
+  );
 }
 
 seed()

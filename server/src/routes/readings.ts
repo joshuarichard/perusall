@@ -29,15 +29,8 @@ readingsRouter.get(
       include: {
         creator: true,
         annotations: {
-          where: { parentId: null },
-          include: {
-            author: true,
-            replies: {
-              include: { author: true },
-              orderBy: { createdAt: 'asc' },
-            },
-          },
-          orderBy: { createdAt: 'desc' },
+          include: { author: true },
+          orderBy: { createdAt: 'asc' },
         },
       },
     });
@@ -47,7 +40,19 @@ readingsRouter.get(
       return;
     }
 
-    res.json(reading);
+    // Build tree from flat list to support unlimited nesting depth
+    const byId = new Map(reading.annotations.map((a) => [a.id, { ...a, replies: [] as any[] }]));
+    const roots: any[] = [];
+    for (const node of byId.values()) {
+      if (node.parentId && byId.has(node.parentId)) {
+        byId.get(node.parentId)!.replies.push(node);
+      } else if (!node.parentId) {
+        roots.push(node);
+      }
+    }
+    roots.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+
+    res.json({ ...reading, annotations: roots });
   },
 );
 
