@@ -18,9 +18,17 @@ globs: **/*.{ts,tsx}
 
 - Functional components with hooks (no class components)
 - Named exports for components, default exports for pages
-- API calls go through RTK Query — no raw fetch/axios in components
-- Redux slices follow RTK conventions with `createSlice` and `createApi`
 - Error boundaries at route level
+
+## Redux Toolkit & RTK Query
+
+- All API endpoints defined in a single `createApi` call in `client/src/app/api.ts`
+- No raw `fetch`/`axios` in components — all data fetching goes through RTK Query hooks
+- Tag-based cache invalidation: queries declare `providesTags`, mutations declare `invalidatesTags`
+- Tag types: `'Reading'` (list-level, also used by dashboard) and `'ReadingDetail'` (per-reading)
+- Export generated hooks (`useGetReadingsQuery`, `useCreateReadingMutation`, etc.) from `api.ts`
+- Use `useAppSelector` and `useAppDispatch` from `app/hooks.ts` — pre-typed to the store
+- Auth state managed via `createSlice` in `app/authSlice.ts` (simulated login, not production auth)
 
 ## Styled Components
 
