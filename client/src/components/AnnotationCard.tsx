@@ -8,10 +8,10 @@ import {
 import type { Annotation } from '../app/types';
 import { useTranslation } from '../i18n';
 import { StyledButton, StyledCancelButton, StyledActionButton, StyledDeleteButton } from './Button';
+import { StyledCard as StyledCardBase } from './Card';
+import { StyledTextarea, StyledFormActions } from './FormElements';
 
-const StyledCard = styled.div`
-  background: ${({ theme }) => theme.colors.surface};
-  border: 1px solid ${({ theme }) => theme.colors.border};
+const StyledAnnotationCard = styled(StyledCardBase)`
   border-radius: ${({ theme }) => theme.borderRadius.md};
   padding: ${({ theme }) => theme.spacing.md} ${({ theme }) => theme.spacing.lg};
   margin-bottom: ${({ theme }) => theme.spacing.sm};
@@ -51,27 +51,11 @@ const StyledEditForm = styled.form`
   gap: ${({ theme }) => theme.spacing.sm};
 `;
 
-const StyledEditInput = styled.textarea`
-  padding: ${({ theme }) => theme.spacing.sm};
-  border: 1px solid ${({ theme }) => theme.colors.borderFocus};
-  border-radius: ${({ theme }) => theme.borderRadius.md};
-  font-size: ${({ theme }) => theme.fontSize.base};
-  font-family: inherit;
-  background: ${({ theme }) => theme.colors.surface};
-  color: ${({ theme }) => theme.colors.text};
+const StyledEditInput = styled(StyledTextarea)`
+  border-color: ${({ theme }) => theme.colors.borderFocus};
+  margin-bottom: 0;
   min-height: 60px;
-  resize: vertical;
-
-  &:focus {
-    outline: none;
-    box-shadow: 0 0 0 3px ${({ theme }) => theme.colors.primaryLight};
-  }
-`;
-
-const StyledEditActions = styled.div`
-  display: flex;
-  gap: ${({ theme }) => theme.spacing.sm};
-  justify-content: flex-end;
+  padding: ${({ theme }) => theme.spacing.sm};
 `;
 
 const StyledSaveButton = styled(StyledButton)`
@@ -98,23 +82,13 @@ const StyledReplyForm = styled.form`
   padding-left: ${({ theme }) => theme.spacing.md};
 `;
 
-const StyledReplyInput = styled.textarea`
+const StyledReplyInput = styled(StyledTextarea)`
   flex: 1;
-  padding: ${({ theme }) => theme.spacing.sm};
-  border: 1px solid ${({ theme }) => theme.colors.border};
-  border-radius: ${({ theme }) => theme.borderRadius.md};
-  font-size: ${({ theme }) => theme.fontSize.sm};
-  font-family: inherit;
-  background: ${({ theme }) => theme.colors.surface};
-  color: ${({ theme }) => theme.colors.text};
+  width: auto;
+  margin-bottom: 0;
   min-height: 40px;
-  resize: vertical;
-
-  &:focus {
-    outline: none;
-    border-color: ${({ theme }) => theme.colors.borderFocus};
-    box-shadow: 0 0 0 3px ${({ theme }) => theme.colors.primaryLight};
-  }
+  padding: ${({ theme }) => theme.spacing.sm};
+  font-size: ${({ theme }) => theme.fontSize.sm};
 `;
 
 const StyledReplyActions = styled.div`
@@ -200,7 +174,7 @@ export function AnnotationCard({
 
   return (
     <>
-      <StyledCard>
+      <StyledAnnotationCard>
         <StyledHeader>
           <StyledAuthor>{annotation.author.name}</StyledAuthor>
           <StyledTime>{new Date(annotation.createdAt).toLocaleString()}</StyledTime>
@@ -209,7 +183,7 @@ export function AnnotationCard({
         {isEditing ? (
           <StyledEditForm onSubmit={handleSave}>
             <StyledEditInput value={editContent} onChange={(e) => setEditContent(e.target.value)} />
-            <StyledEditActions>
+            <StyledFormActions>
               <StyledEditCancelButton
                 type="button"
                 onClick={() => {
@@ -222,7 +196,7 @@ export function AnnotationCard({
               <StyledSaveButton type="submit" disabled={isSaving || !editContent.trim()}>
                 {isSaving ? t('annotation.saving') : t('annotation.save')}
               </StyledSaveButton>
-            </StyledEditActions>
+            </StyledFormActions>
           </StyledEditForm>
         ) : (
           <>
@@ -260,7 +234,7 @@ export function AnnotationCard({
             </StyledActions>
           </>
         )}
-      </StyledCard>
+      </StyledAnnotationCard>
 
       {isReplying && (
         <StyledReplyForm onSubmit={handleReply}>

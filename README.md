@@ -4,6 +4,8 @@ A full-stack collaborative reading application where instructors assign readings
 
 Built with TypeScript (strict mode), React, Redux Toolkit, Styled Components (with dark mode and i18n), Vite, Express, Prisma, and SQLite.
 
+![Demo](resources/demo.gif)
+
 ## Quick Start
 
 ### Prerequisites

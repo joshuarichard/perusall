@@ -12,6 +12,7 @@ import { useTranslation } from '../i18n';
 import {
   AnnotationCard,
   StyledButton,
+  StyledTextarea,
   StyledErrorMessage,
   StyledEmptyStateCard,
   StyledCard,
@@ -109,23 +110,12 @@ const StyledAnnotationForm = styled.form`
   margin-bottom: ${({ theme }) => theme.spacing.xl};
 `;
 
-const StyledAnnotationInput = styled.textarea`
+const StyledAnnotationInput = styled(StyledTextarea)`
   flex: 1;
-  padding: ${({ theme }) => theme.spacing.md};
-  border: 1px solid ${({ theme }) => theme.colors.border};
-  border-radius: ${({ theme }) => theme.borderRadius.md};
-  font-size: ${({ theme }) => theme.fontSize.base};
-  font-family: inherit;
-  background: ${({ theme }) => theme.colors.surface};
-  color: ${({ theme }) => theme.colors.text};
+  width: auto;
+  margin-bottom: 0;
   min-height: 60px;
-  resize: vertical;
-
-  &:focus {
-    outline: none;
-    border-color: ${({ theme }) => theme.colors.borderFocus};
-    box-shadow: 0 0 0 3px ${({ theme }) => theme.colors.primaryLight};
-  }
+  padding: ${({ theme }) => theme.spacing.md};
 `;
 
 const StyledSubmitButton = styled(StyledButton)`

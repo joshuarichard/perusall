@@ -39,3 +39,6 @@ test-results
 
 # Personal prep notes
 resources/panel-prep.md
+
+# Large video files
+*.mov
