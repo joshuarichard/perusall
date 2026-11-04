@@ -30,6 +30,9 @@ dist-ssr
 *.sln
 *.sw?
 
+# Hook caches
+.claude/hooks/*/tsconfig-cache.json
+
 # Test artifacts
 coverage
 test-results
