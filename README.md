@@ -175,23 +175,7 @@ Annotations support unlimited reply depth via the self-referential `parentId` fo
 | `GET`    | `/api/readings/:id/stats` | Reading engagement statistics            | Instructor |
 | `GET`    | `/api/dashboard`          | Aggregate dashboard data                 | Instructor |
 
-## Development
-
-### Available Scripts
-
-```bash
-npm run dev              # Start both client and server in dev mode
-npm run dev:client       # Start only the Vite dev server
-npm run dev:server       # Start only the Express server
-npm run build            # Build client for production
-npm run db:setup         # Run migrations + seed data
-npm run db:reset         # Reset database and re-seed
-npm run db:migrate       # Run Prisma migrations only
-npm run seed             # Seed database only
-npm run typecheck        # TypeScript type checking
-```
-
-### Testing
+## Testing
 
 ```bash
 npm run test             # Run all unit tests (server + client)
