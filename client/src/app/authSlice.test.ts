@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import authReducer, { setCurrentUser, logout } from './authSlice';
-import type { User } from '../../app/api';
+import type { User } from './api';
 
 const mockUser: User = {
   id: 'user-1',
