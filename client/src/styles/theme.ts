@@ -27,9 +27,9 @@ const shared = {
 export const lightTheme = {
   ...shared,
   colors: {
-    primary: '#4F46E5',
-    primaryHover: '#4338CA',
-    primaryLight: '#EEF2FF',
+    primary: '#A31D1D',
+    primaryHover: '#8B1818',
+    primaryLight: '#FDF2F2',
     secondary: '#6B7280',
     success: '#10B981',
     successLight: '#ECFDF5',
@@ -42,7 +42,7 @@ export const lightTheme = {
     textSecondary: '#6B7280',
     textMuted: '#9CA3AF',
     border: '#E5E7EB',
-    borderFocus: '#4F46E5',
+    borderFocus: '#A31D1D',
   },
   shadow: {
     sm: '0 1px 2px rgba(0, 0, 0, 0.05)',
@@ -54,9 +54,9 @@ export const lightTheme = {
 export const darkTheme = {
   ...shared,
   colors: {
-    primary: '#818CF8',
-    primaryHover: '#6366F1',
-    primaryLight: '#1E1B4B',
+    primary: '#E85D5D',
+    primaryHover: '#D44A4A',
+    primaryLight: '#3B1515',
     secondary: '#9CA3AF',
     success: '#34D399',
     successLight: '#052E16',
@@ -69,7 +69,7 @@ export const darkTheme = {
     textSecondary: '#D1D5DB',
     textMuted: '#9CA3AF',
     border: '#374151',
-    borderFocus: '#818CF8',
+    borderFocus: '#E85D5D',
   },
   shadow: {
     sm: '0 1px 2px rgba(0, 0, 0, 0.3)',

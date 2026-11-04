@@ -37,7 +37,7 @@ perusall/
 │   ├── data/             # Prisma client + seed script (barrel: index.ts)
 │   ├── routes/           # API handlers + colocated tests (barrel: index.ts)
 │   ├── test/             # Integration test helper (creates temp SQLite DBs)
-│   └── types.ts          # Server-only request body types
+│   └── types.ts          # Server-only request body types + centralized API error constants
 ├── server/prisma/        # Schema + migrations
 ├── e2e/                  # Playwright E2E tests
 └── playwright.config.ts
@@ -56,6 +56,9 @@ perusall/
 - Shared wire types live in `shared/types.ts`; client re-exports via `@shared` alias
 - Dark mode via `ThemeContext` with localStorage persistence + `prefers-color-scheme` fallback
 - i18n via `I18nContext` with `useTranslation` hook; translations in `i18n/translations.ts`; localStorage persistence + `navigator.language` fallback
+- API error messages centralized in `Errors` constant (`server/src/types.ts`); routes and tests reference the constant
+- Strict TypeScript (`strict: true`) enabled on both client and server
+- Perusall brand colors (crimson red) — theme tokens in `styles/theme.ts`
 - Extensionless local imports (no `.js` suffixes)
 - Comments explain _why_, not _what_
 - Error boundaries at route level

@@ -19,6 +19,12 @@
             "command": "bash $CLAUDE_PROJECT_DIR/.claude/hooks/typecheck.sh",
             "timeout": 30,
             "statusMessage": "Running typecheck..."
+          },
+          {
+            "type": "command",
+            "command": "bash $CLAUDE_PROJECT_DIR/.claude/hooks/check-docs.sh",
+            "timeout": 10,
+            "statusMessage": "Checking docs..."
           }
         ]
       }

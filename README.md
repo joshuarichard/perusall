@@ -2,7 +2,7 @@
 
 A full-stack collaborative reading application where instructors assign readings and students discuss them through threaded annotations.
 
-Built with TypeScript, React, Redux Toolkit, Styled Components (with dark mode), Vite, Express, Prisma, and SQLite.
+Built with TypeScript (strict mode), React, Redux Toolkit, Styled Components (with dark mode and i18n), Vite, Express, Prisma, and SQLite.
 
 ## Quick Start
 
@@ -93,6 +93,7 @@ npm run db:reset
 |---|-------------|--------|
 | 1 | **Dark Mode** — System preference detection, manual toggle, localStorage persistence | :white_check_mark: |
 | 2 | **Internationalization (i18n)** — Multi-language support (English/Spanish), browser detection, localStorage persistence | :white_check_mark: |
+| 3 | **Brand Theming** — Perusall logo and brand color palette across light and dark themes | :white_check_mark: |
 
 ### For Students
 
@@ -113,7 +114,8 @@ npm run db:reset
 
 - Role-based UI — select identity to simulate login
 - Dark mode with system preference detection and manual toggle (persisted in localStorage)
-- Internationalization (i18n) with English and Spanish, browser language detection, and manual toggle (persisted in localStorage)
+- Internationalization (i18n) with English and Spanish, browser language detection, and language dropdown (persisted in localStorage)
+- Brand-aligned Perusall color palette (crimson red) across both themes
 - Empty state handling for readings, annotations, and search
 - Success/error notifications
 - Annotations displayed in reverse chronological order with nested reply threads
