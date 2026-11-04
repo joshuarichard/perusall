@@ -37,8 +37,10 @@ export interface Annotation {
   content: string;
   readingId: string;
   authorId: string;
+  parentId: string | null;
   createdAt: string;
   author: User;
+  replies?: Annotation[];
 }
 
 export interface ReadingStats {
@@ -80,7 +82,7 @@ export const api = createApi({
 
     createAnnotation: builder.mutation<
       Annotation,
-      { content: string; readingId: string; authorId: string }
+      { content: string; readingId: string; authorId: string; parentId?: string }
     >({
       query: (body) => ({ url: '/annotations', method: 'POST', body }),
       invalidatesTags: (_result, _error, { readingId }) => [

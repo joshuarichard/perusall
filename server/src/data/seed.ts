@@ -192,15 +192,68 @@ async function seed() {
     },
   ];
 
-  for (const a of annotations) {
-    await prisma.annotation.create({ data: a });
+  const createdAnnotations: Record<string, string> = {};
+  for (let i = 0; i < annotations.length; i++) {
+    const a = await prisma.annotation.create({ data: annotations[i] });
+    createdAnnotations[`a${i}`] = a.id;
+  }
+
+  // Create threaded replies
+  const replies = [
+    // Reply to Sarah's supervised/unsupervised question (a0) from Michael
+    {
+      content: 'Thanks Michael! So would clustering be an example of unsupervised learning?',
+      readingId: mlReading.id,
+      authorId: sarah.id,
+      parentId: createdAnnotations['a0'],
+      createdAt: new Date('2026-10-20T11:15:00Z'),
+    },
+    {
+      content:
+        'Exactly! K-means clustering is a classic unsupervised algorithm. No labels needed — it just groups similar data points together.',
+      readingId: mlReading.id,
+      authorId: michael.id,
+      parentId: createdAnnotations['a0'],
+      createdAt: new Date('2026-10-20T12:30:00Z'),
+    },
+    // Reply to Alex's AlphaGo question (a2)
+    {
+      content:
+        "That's a great connection! Chess engines like Stockfish use a different approach though — mostly search trees rather than RL.",
+      readingId: mlReading.id,
+      authorId: sarah.id,
+      parentId: createdAnnotations['a2'],
+      createdAt: new Date('2026-10-20T15:10:00Z'),
+    },
+    // Reply to Sarah's Hamlet indecision comment (a7)
+    {
+      content:
+        "I think you're onto something. The whole play can be read as a critique of the intellectual who thinks too much and acts too late.",
+      readingId: shakespeareReading.id,
+      authorId: michael.id,
+      parentId: createdAnnotations['a7'],
+      createdAt: new Date('2026-10-23T14:45:00Z'),
+    },
+    // Reply to Michael's ocean temperature comment (a13)
+    {
+      content:
+        'Iron fertilization of oceans has been proposed but the ecological side effects are largely unknown. Risky intervention.',
+      readingId: climateReading.id,
+      authorId: alex.id,
+      parentId: createdAnnotations['a13'],
+      createdAt: new Date('2026-10-28T13:00:00Z'),
+    },
+  ];
+
+  for (const r of replies) {
+    await prisma.annotation.create({ data: r });
   }
 
   console.log('Database seeded successfully!');
   console.log(`  - ${2} instructors`);
   console.log(`  - ${3} students`);
   console.log(`  - ${3} readings`);
-  console.log(`  - ${20} annotations`);
+  console.log(`  - ${20} annotations + ${replies.length} replies`);
 }
 
 seed()

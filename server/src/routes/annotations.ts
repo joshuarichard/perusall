@@ -10,7 +10,7 @@ annotationsRouter.post(
     req: Request<{}, Annotation | ApiError, CreateAnnotationBody>,
     res: Response<Annotation | ApiError>,
   ) => {
-    const { content, readingId, authorId } = req.body;
+    const { content, readingId, authorId, parentId } = req.body;
 
     if (!content?.trim()) {
       res.status(400).json({ error: 'Annotation content cannot be empty' });
@@ -22,11 +22,24 @@ annotationsRouter.post(
       return;
     }
 
+    if (parentId) {
+      const parent = await prisma.annotation.findUnique({ where: { id: parentId } });
+      if (!parent) {
+        res.status(404).json({ error: 'Parent annotation not found' });
+        return;
+      }
+      if (parent.readingId !== readingId) {
+        res.status(400).json({ error: 'Reply must be on the same reading as the parent' });
+        return;
+      }
+    }
+
     const annotation = await prisma.annotation.create({
       data: {
         content: content.trim(),
         readingId,
         authorId,
+        ...(parentId && { parentId }),
       },
       include: { author: true },
     });

@@ -89,7 +89,14 @@ describe('GET /api/readings/:id', () => {
       include: {
         creator: true,
         annotations: {
-          include: { author: true },
+          where: { parentId: null },
+          include: {
+            author: true,
+            replies: {
+              include: { author: true },
+              orderBy: { createdAt: 'asc' },
+            },
+          },
           orderBy: { createdAt: 'desc' },
         },
       },

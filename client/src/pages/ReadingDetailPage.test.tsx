@@ -52,8 +52,10 @@ const mockReading = {
       content: 'Great reading!',
       readingId: 'r1',
       authorId: 'stu-1',
+      parentId: null,
       createdAt: '2024-01-16T10:00:00Z',
       author: mockStudent,
+      replies: [],
     },
   ],
 };
@@ -66,24 +68,57 @@ const mockReadingMultipleAuthors = {
       content: 'Great reading!',
       readingId: 'r1',
       authorId: 'stu-1',
+      parentId: null,
       createdAt: '2024-01-16T10:00:00Z',
       author: mockStudent,
+      replies: [],
     },
     {
       id: 'a2',
       content: 'Very informative.',
       readingId: 'r1',
       authorId: 'stu-2',
+      parentId: null,
       createdAt: '2024-01-16T11:00:00Z',
       author: mockStudent2,
+      replies: [],
     },
     {
       id: 'a3',
       content: 'I have a follow-up question.',
       readingId: 'r1',
       authorId: 'stu-1',
+      parentId: null,
       createdAt: '2024-01-16T12:00:00Z',
       author: mockStudent,
+      replies: [],
+    },
+  ],
+};
+
+const mockReadingWithReplies = {
+  ...mockReading,
+  annotations: [
+    {
+      id: 'a1',
+      content: 'Great reading!',
+      readingId: 'r1',
+      authorId: 'stu-1',
+      parentId: null,
+      createdAt: '2024-01-16T10:00:00Z',
+      author: mockStudent,
+      replies: [
+        {
+          id: 'r1-reply',
+          content: 'I agree, very insightful!',
+          readingId: 'r1',
+          authorId: 'stu-2',
+          parentId: 'a1',
+          createdAt: '2024-01-16T11:00:00Z',
+          author: mockStudent2,
+          replies: [],
+        },
+      ],
     },
   ],
 };
@@ -513,5 +548,151 @@ describe('ReadingDetailPage', () => {
 
     expect(screen.queryByText('Edit')).not.toBeInTheDocument();
     expect(screen.queryByText('Delete')).not.toBeInTheDocument();
+  });
+
+  it('shows reply button for students on all annotations', () => {
+    vi.mocked(apiModule.useGetReadingQuery).mockReturnValue({
+      data: mockReadingMultipleAuthors,
+      isLoading: false,
+      error: undefined,
+    } as any);
+
+    renderDetailPage(mockStudent);
+
+    const replyButtons = screen.getAllByText('Reply');
+    expect(replyButtons).toHaveLength(3);
+  });
+
+  it('hides reply button for instructors', () => {
+    vi.mocked(apiModule.useGetReadingQuery).mockReturnValue({
+      data: mockReading,
+      isLoading: false,
+      error: undefined,
+    } as any);
+
+    renderDetailPage(mockInstructor);
+
+    expect(screen.queryByText('Reply')).not.toBeInTheDocument();
+  });
+
+  it('opens reply form and submits reply', async () => {
+    mockCreateAnnotation.mockReturnValue({ unwrap: () => Promise.resolve({}) });
+
+    vi.mocked(apiModule.useGetReadingQuery).mockReturnValue({
+      data: mockReading,
+      isLoading: false,
+      error: undefined,
+    } as any);
+
+    const user = userEvent.setup();
+    renderDetailPage(mockStudent);
+
+    await user.click(screen.getByText('Reply'));
+
+    const replyInput = screen.getByPlaceholderText(/reply to sarah/i);
+    expect(replyInput).toBeInTheDocument();
+
+    await user.type(replyInput, 'Thanks for sharing!');
+    await user.click(
+      screen.getAllByText('Reply').find((el) => el.tagName === 'BUTTON' && el.closest('form'))!,
+    );
+
+    expect(mockCreateAnnotation).toHaveBeenCalledWith({
+      content: 'Thanks for sharing!',
+      readingId: 'r1',
+      authorId: 'stu-1',
+      parentId: 'a1',
+    });
+  });
+
+  it('cancels reply form', async () => {
+    vi.mocked(apiModule.useGetReadingQuery).mockReturnValue({
+      data: mockReading,
+      isLoading: false,
+      error: undefined,
+    } as any);
+
+    const user = userEvent.setup();
+    renderDetailPage(mockStudent);
+
+    await user.click(screen.getByText('Reply'));
+    expect(screen.getByPlaceholderText(/reply to sarah/i)).toBeInTheDocument();
+
+    await user.click(screen.getByText('Cancel'));
+    expect(screen.queryByPlaceholderText(/reply to sarah/i)).not.toBeInTheDocument();
+  });
+
+  it('renders nested replies', () => {
+    vi.mocked(apiModule.useGetReadingQuery).mockReturnValue({
+      data: mockReadingWithReplies,
+      isLoading: false,
+      error: undefined,
+    } as any);
+
+    renderDetailPage(mockStudent);
+
+    expect(screen.getByText('Great reading!')).toBeInTheDocument();
+    expect(screen.getByText('I agree, very insightful!')).toBeInTheDocument();
+    expect(screen.getAllByText('Michael').length).toBeGreaterThanOrEqual(1);
+  });
+
+  it('shows edit/delete on own replies', () => {
+    vi.mocked(apiModule.useGetReadingQuery).mockReturnValue({
+      data: mockReadingWithReplies,
+      isLoading: false,
+      error: undefined,
+    } as any);
+
+    renderDetailPage(mockStudent2);
+
+    const editButtons = screen.getAllByText('Edit');
+    const deleteButtons = screen.getAllByText('Delete');
+    expect(editButtons).toHaveLength(1);
+    expect(deleteButtons).toHaveLength(1);
+  });
+
+  it('allows student to reply to own annotation', async () => {
+    mockCreateAnnotation.mockReturnValue({ unwrap: () => Promise.resolve({}) });
+
+    vi.mocked(apiModule.useGetReadingQuery).mockReturnValue({
+      data: mockReading,
+      isLoading: false,
+      error: undefined,
+    } as any);
+
+    const user = userEvent.setup();
+    renderDetailPage(mockStudent);
+
+    await user.click(screen.getByText('Reply'));
+    const replyInput = screen.getByPlaceholderText(/reply to sarah/i);
+    await user.type(replyInput, 'Adding more context');
+
+    const submitButton = screen
+      .getAllByText('Reply')
+      .find((el) => el.tagName === 'BUTTON' && el.closest('form'))!;
+    await user.click(submitButton);
+
+    expect(mockCreateAnnotation).toHaveBeenCalledWith({
+      content: 'Adding more context',
+      readingId: 'r1',
+      authorId: 'stu-1',
+      parentId: 'a1',
+    });
+  });
+
+  it('includes reply authors in filter dropdown', () => {
+    vi.mocked(apiModule.useGetReadingQuery).mockReturnValue({
+      data: mockReadingWithReplies,
+      isLoading: false,
+      error: undefined,
+    } as any);
+
+    renderDetailPage(mockStudent);
+
+    const options = screen.getAllByRole('option');
+    expect(options).toHaveLength(3);
+    expect(options[0]).toHaveTextContent('All students');
+    expect(options[1]).toHaveTextContent('Michael');
+    expect(options[2]).toHaveTextContent('Sarah');
   });
 });

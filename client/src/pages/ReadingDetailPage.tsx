@@ -275,20 +275,86 @@ const StyledErrorMessage = styled.p`
   margin-bottom: ${({ theme }) => theme.spacing.sm};
 `;
 
+const StyledReplies = styled.div`
+  margin-left: ${({ theme }) => theme.spacing.xl};
+  margin-top: ${({ theme }) => theme.spacing.xs};
+  border-left: 2px solid ${({ theme }) => theme.colors.border};
+  padding-left: ${({ theme }) => theme.spacing.md};
+`;
+
+const StyledReplyForm = styled.form`
+  display: flex;
+  gap: ${({ theme }) => theme.spacing.sm};
+  margin-top: ${({ theme }) => theme.spacing.sm};
+  margin-left: ${({ theme }) => theme.spacing.xl};
+  padding-left: ${({ theme }) => theme.spacing.md};
+`;
+
+const StyledReplyInput = styled.textarea`
+  flex: 1;
+  padding: ${({ theme }) => theme.spacing.sm};
+  border: 1px solid ${({ theme }) => theme.colors.border};
+  border-radius: ${({ theme }) => theme.borderRadius.md};
+  font-size: ${({ theme }) => theme.fontSize.sm};
+  font-family: inherit;
+  min-height: 40px;
+  resize: vertical;
+
+  &:focus {
+    outline: none;
+    border-color: ${({ theme }) => theme.colors.borderFocus};
+    box-shadow: 0 0 0 3px ${({ theme }) => theme.colors.primaryLight};
+  }
+`;
+
+const StyledReplyActions = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: ${({ theme }) => theme.spacing.xs};
+  align-self: flex-end;
+`;
+
+const StyledReplySubmitButton = styled.button`
+  background: ${({ theme }) => theme.colors.primary};
+  color: white;
+  border: none;
+  border-radius: ${({ theme }) => theme.borderRadius.md};
+  padding: ${({ theme }) => theme.spacing.xs} ${({ theme }) => theme.spacing.md};
+  font-size: ${({ theme }) => theme.fontSize.xs};
+  cursor: pointer;
+  white-space: nowrap;
+
+  &:hover {
+    background: ${({ theme }) => theme.colors.primaryHover};
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+`;
+
 function AnnotationCard({
   annotation,
   isOwner,
+  isStudent,
+  currentUserId,
   readingId,
 }: {
   annotation: Annotation;
   isOwner: boolean;
+  isStudent: boolean;
+  currentUserId: string | undefined;
   readingId: string;
 }) {
   const [isEditing, setIsEditing] = useState(false);
   const [editContent, setEditContent] = useState(annotation.content);
   const [confirmDelete, setConfirmDelete] = useState(false);
+  const [isReplying, setIsReplying] = useState(false);
+  const [replyContent, setReplyContent] = useState('');
   const [updateAnnotation, { isLoading: isSaving }] = useUpdateAnnotationMutation();
   const [deleteAnnotation, { isLoading: isDeleting }] = useDeleteAnnotationMutation();
+  const [createAnnotation, { isLoading: isSubmittingReply }] = useCreateAnnotationMutation();
 
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -318,37 +384,54 @@ function AnnotationCard({
     }
   };
 
-  return (
-    <StyledAnnotationCard>
-      <StyledAnnotationHeader>
-        <StyledAnnotationAuthor>{annotation.author.name}</StyledAnnotationAuthor>
-        <StyledAnnotationTime>
-          {new Date(annotation.createdAt).toLocaleString()}
-        </StyledAnnotationTime>
-      </StyledAnnotationHeader>
+  const handleReply = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!replyContent.trim() || !currentUserId) return;
+    try {
+      await createAnnotation({
+        content: replyContent.trim(),
+        readingId,
+        authorId: currentUserId,
+        parentId: annotation.id,
+      }).unwrap();
+      setReplyContent('');
+      setIsReplying(false);
+    } catch {
+      // keep reply form open on failure
+    }
+  };
 
-      {isEditing ? (
-        <StyledEditForm onSubmit={handleSave}>
-          <StyledEditInput value={editContent} onChange={(e) => setEditContent(e.target.value)} />
-          <StyledEditActions>
-            <StyledCancelButton
-              type="button"
-              onClick={() => {
-                setIsEditing(false);
-                setEditContent(annotation.content);
-              }}
-            >
-              Cancel
-            </StyledCancelButton>
-            <StyledSaveButton type="submit" disabled={isSaving || !editContent.trim()}>
-              {isSaving ? 'Saving...' : 'Save'}
-            </StyledSaveButton>
-          </StyledEditActions>
-        </StyledEditForm>
-      ) : (
-        <>
-          <StyledAnnotationContent>{annotation.content}</StyledAnnotationContent>
-          {isOwner && (
+  return (
+    <>
+      <StyledAnnotationCard>
+        <StyledAnnotationHeader>
+          <StyledAnnotationAuthor>{annotation.author.name}</StyledAnnotationAuthor>
+          <StyledAnnotationTime>
+            {new Date(annotation.createdAt).toLocaleString()}
+          </StyledAnnotationTime>
+        </StyledAnnotationHeader>
+
+        {isEditing ? (
+          <StyledEditForm onSubmit={handleSave}>
+            <StyledEditInput value={editContent} onChange={(e) => setEditContent(e.target.value)} />
+            <StyledEditActions>
+              <StyledCancelButton
+                type="button"
+                onClick={() => {
+                  setIsEditing(false);
+                  setEditContent(annotation.content);
+                }}
+              >
+                Cancel
+              </StyledCancelButton>
+              <StyledSaveButton type="submit" disabled={isSaving || !editContent.trim()}>
+                {isSaving ? 'Saving...' : 'Save'}
+              </StyledSaveButton>
+            </StyledEditActions>
+          </StyledEditForm>
+        ) : (
+          <>
+            <StyledAnnotationContent>{annotation.content}</StyledAnnotationContent>
             <StyledAnnotationActions>
               {confirmDelete ? (
                 <>
@@ -362,17 +445,70 @@ function AnnotationCard({
                 </>
               ) : (
                 <>
-                  <StyledActionButton onClick={() => setIsEditing(true)}>Edit</StyledActionButton>
-                  <StyledDeleteButton onClick={() => setConfirmDelete(true)}>
-                    Delete
-                  </StyledDeleteButton>
+                  {isOwner && (
+                    <>
+                      <StyledActionButton onClick={() => setIsEditing(true)}>
+                        Edit
+                      </StyledActionButton>
+                      <StyledDeleteButton onClick={() => setConfirmDelete(true)}>
+                        Delete
+                      </StyledDeleteButton>
+                    </>
+                  )}
+                  {isStudent && !isReplying && (
+                    <StyledActionButton onClick={() => setIsReplying(true)}>
+                      Reply
+                    </StyledActionButton>
+                  )}
                 </>
               )}
             </StyledAnnotationActions>
-          )}
-        </>
+          </>
+        )}
+      </StyledAnnotationCard>
+
+      {isReplying && (
+        <StyledReplyForm onSubmit={handleReply}>
+          <StyledReplyInput
+            placeholder={`Reply to ${annotation.author.name}...`}
+            value={replyContent}
+            onChange={(e) => setReplyContent(e.target.value)}
+          />
+          <StyledReplyActions>
+            <StyledReplySubmitButton
+              type="submit"
+              disabled={isSubmittingReply || !replyContent.trim()}
+            >
+              {isSubmittingReply ? 'Posting...' : 'Reply'}
+            </StyledReplySubmitButton>
+            <StyledCancelButton
+              type="button"
+              onClick={() => {
+                setIsReplying(false);
+                setReplyContent('');
+              }}
+            >
+              Cancel
+            </StyledCancelButton>
+          </StyledReplyActions>
+        </StyledReplyForm>
       )}
-    </StyledAnnotationCard>
+
+      {annotation.replies && annotation.replies.length > 0 && (
+        <StyledReplies>
+          {annotation.replies.map((reply) => (
+            <AnnotationCard
+              key={reply.id}
+              annotation={reply}
+              isOwner={currentUserId === reply.authorId}
+              isStudent={isStudent}
+              currentUserId={currentUserId}
+              readingId={readingId}
+            />
+          ))}
+        </StyledReplies>
+      )}
+    </>
   );
 }
 
@@ -395,6 +531,9 @@ export default function ReadingDetailPage() {
     const seen = new Map<string, string>();
     for (const a of reading.annotations) {
       if (!seen.has(a.author.id)) seen.set(a.author.id, a.author.name);
+      for (const r of a.replies ?? []) {
+        if (!seen.has(r.author.id)) seen.set(r.author.id, r.author.name);
+      }
     }
     return Array.from(seen, ([id, name]) => ({ id, name })).sort((a, b) =>
       a.name.localeCompare(b.name),
@@ -404,8 +543,17 @@ export default function ReadingDetailPage() {
   const filteredAnnotations = useMemo(() => {
     if (!reading) return [];
     if (!filterAuthorId) return reading.annotations;
-    return reading.annotations.filter((a) => a.author.id === filterAuthorId);
+    return reading.annotations.filter(
+      (a) =>
+        a.author.id === filterAuthorId ||
+        (a.replies ?? []).some((r) => r.author.id === filterAuthorId),
+    );
   }, [reading, filterAuthorId]);
+
+  const totalAnnotationCount = useMemo(() => {
+    if (!reading) return 0;
+    return reading.annotations.reduce((sum, a) => sum + 1 + (a.replies?.length ?? 0), 0);
+  }, [reading]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -463,7 +611,7 @@ export default function ReadingDetailPage() {
             Discussion ({filteredAnnotations.length}
             {filterAuthorId && ` of ${reading.annotations.length}`})
           </StyledSectionTitle>
-          {reading.annotations.length > 0 && (
+          {totalAnnotationCount > 0 && (
             <StyledFilterSelect
               value={filterAuthorId}
               onChange={(e) => setFilterAuthorId(e.target.value)}
@@ -511,6 +659,8 @@ export default function ReadingDetailPage() {
               key={annotation.id}
               annotation={annotation}
               isOwner={currentUser?.id === annotation.authorId}
+              isStudent={!!isStudent}
+              currentUserId={currentUser?.id}
               readingId={id!}
             />
           ))

@@ -12,8 +12,10 @@ export interface Annotation {
   content: string;
   readingId: string;
   authorId: string;
+  parentId: string | null;
   createdAt: Date;
   author: User;
+  replies?: Annotation[];
 }
 
 // --- Request Bodies ---
@@ -28,6 +30,7 @@ export interface CreateAnnotationBody {
   content: string;
   readingId: string;
   authorId: string;
+  parentId?: string;
 }
 
 export interface UpdateAnnotationBody {

@@ -58,7 +58,7 @@ List all readings with their creator and annotation count, newest first.
 
 ### GET /api/readings/:id
 
-Get a single reading with all its annotations (newest first).
+Get a single reading with top-level annotations (newest first) and their threaded replies (oldest first). Only top-level annotations (`parentId: null`) are returned at the root level; replies are nested under their parent's `replies` array.
 
 **Response** `200 OK`
 
@@ -76,13 +76,20 @@ Get a single reading with all its annotations (newest first).
       "content": "Great reading!",
       "readingId": "reading-uuid",
       "authorId": "user-uuid",
+      "parentId": null,
       "createdAt": "2024-01-16T10:00:00.000Z",
-      "author": {
-        "id": "user-uuid",
-        "name": "Sarah",
-        "role": "student",
-        "createdAt": "2024-01-01T00:00:00.000Z"
-      }
+      "author": { ... },
+      "replies": [
+        {
+          "id": "reply-uuid",
+          "content": "I agree!",
+          "readingId": "reading-uuid",
+          "authorId": "other-user-uuid",
+          "parentId": "uuid",
+          "createdAt": "2024-01-16T11:00:00.000Z",
+          "author": { ... }
+        }
+      ]
     }
   ]
 }
@@ -150,21 +157,23 @@ Instructor stats for a reading: total annotations and unique student count.
 
 ### POST /api/annotations
 
-Create an annotation on a reading. Intended for students.
+Create an annotation on a reading, or a reply to an existing annotation. Intended for students.
 
 **Request Body**
 
-| Field       | Type   | Required | Notes                      |
-| ----------- | ------ | -------- | -------------------------- |
-| `content`   | string | yes      | Trimmed; must be non-empty |
-| `readingId` | string | yes      | ID of the reading          |
-| `authorId`  | string | yes      | User ID of the author      |
+| Field       | Type   | Required | Notes                                              |
+| ----------- | ------ | -------- | -------------------------------------------------- |
+| `content`   | string | yes      | Trimmed; must be non-empty                         |
+| `readingId` | string | yes      | ID of the reading                                  |
+| `authorId`  | string | yes      | User ID of the author                              |
+| `parentId`  | string | no       | ID of parent annotation (creates a threaded reply) |
 
 ```json
 {
   "content": "This section was really insightful",
   "readingId": "reading-uuid",
-  "authorId": "user-uuid"
+  "authorId": "user-uuid",
+  "parentId": "annotation-uuid"
 }
 ```
 
@@ -176,6 +185,7 @@ Create an annotation on a reading. Intended for students.
   "content": "This section was really insightful",
   "readingId": "reading-uuid",
   "authorId": "user-uuid",
+  "parentId": "annotation-uuid",
   "createdAt": "2024-01-20T00:00:00.000Z",
   "author": {
     "id": "user-uuid",
@@ -194,6 +204,16 @@ Create an annotation on a reading. Intended for students.
 
 ```json
 { "error": "readingId and authorId are required" }
+```
+
+```json
+{ "error": "Reply must be on the same reading as the parent" }
+```
+
+**Response** `404 Not Found`
+
+```json
+{ "error": "Parent annotation not found" }
 ```
 
 ### PATCH /api/annotations/:id

@@ -99,6 +99,55 @@ describe('POST /api/annotations', () => {
       }),
     );
   });
+
+  it('creates a reply with parentId', async () => {
+    const parent = { id: 'a1', readingId: 'r1', authorId: 'stu-1' };
+    vi.mocked(prisma.annotation.findUnique).mockResolvedValue(parent as any);
+    vi.mocked(prisma.annotation.create).mockResolvedValue({
+      id: 'a2',
+      content: 'Great point!',
+      readingId: 'r1',
+      authorId: 'stu-2',
+      parentId: 'a1',
+      author: { id: 'stu-2', name: 'Michael', role: 'student' },
+    } as any);
+
+    const res = await request(app)
+      .post('/api/annotations')
+      .send({ content: 'Great point!', readingId: 'r1', authorId: 'stu-2', parentId: 'a1' });
+
+    expect(res.status).toBe(201);
+    expect(res.body.parentId).toBe('a1');
+    expect(prisma.annotation.create).toHaveBeenCalledWith({
+      data: { content: 'Great point!', readingId: 'r1', authorId: 'stu-2', parentId: 'a1' },
+      include: { author: true },
+    });
+  });
+
+  it('returns 404 for nonexistent parent annotation', async () => {
+    vi.mocked(prisma.annotation.findUnique).mockResolvedValue(null);
+
+    const res = await request(app)
+      .post('/api/annotations')
+      .send({ content: 'Reply', readingId: 'r1', authorId: 'stu-1', parentId: 'missing' });
+
+    expect(res.status).toBe(404);
+    expect(res.body).toEqual({ error: 'Parent annotation not found' });
+    expect(prisma.annotation.create).not.toHaveBeenCalled();
+  });
+
+  it('rejects reply on different reading than parent', async () => {
+    const parent = { id: 'a1', readingId: 'r1', authorId: 'stu-1' };
+    vi.mocked(prisma.annotation.findUnique).mockResolvedValue(parent as any);
+
+    const res = await request(app)
+      .post('/api/annotations')
+      .send({ content: 'Reply', readingId: 'r2', authorId: 'stu-1', parentId: 'a1' });
+
+    expect(res.status).toBe(400);
+    expect(res.body).toEqual({ error: 'Reply must be on the same reading as the parent' });
+    expect(prisma.annotation.create).not.toHaveBeenCalled();
+  });
 });
 
 const existingAnnotation = {
