@@ -3,7 +3,7 @@ import { test, expect } from '@playwright/test';
 test.describe('User Selection', () => {
   test('shows login page with user list', async ({ page }) => {
     await page.goto('/');
-    await expect(page.getByText('Perusall')).toBeVisible();
+    await expect(page.getByAltText('Perusall')).toBeVisible();
     await expect(page.getByText('Select your identity to get started')).toBeVisible();
     await expect(page.getByText('Instructors')).toBeVisible();
     await expect(page.getByText('Students')).toBeVisible();
@@ -120,7 +120,7 @@ test.describe('Reading Detail & Annotations', () => {
   });
 
   test('student can filter annotations by author', async ({ page }) => {
-    const filterSelect = page.locator('select');
+    const filterSelect = page.locator('main select');
     if ((await filterSelect.count()) > 0) {
       await filterSelect.selectOption({ label: 'Sarah' });
       await expect(
