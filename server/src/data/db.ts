@@ -1,6 +1,6 @@
 import path from 'node:path';
 import { createRequire } from 'node:module';
-import type { PrismaClient } from '.prisma/client';
+import type { PrismaClient } from '@prisma/client';
 
 // Prisma 7 uses "driver adapters" — you bring your own database driver
 // instead of Prisma bundling one. This gives us direct control over the

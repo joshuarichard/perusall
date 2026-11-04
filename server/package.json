@@ -11,7 +11,9 @@
     "db:migrate": "prisma migrate dev",
     "db:setup": "prisma migrate dev && tsx src/data/seed.ts",
     "db:reset": "prisma migrate reset --force && tsx src/data/seed.ts",
-    "test": "vitest run"
+    "test": "vitest run --exclude '**/*.integration.test.ts'",
+    "test:integration": "vitest run 'integration.test'",
+    "test:all": "vitest run"
   },
   "dependencies": {
     "@prisma/adapter-better-sqlite3": "^7.10.1",
@@ -27,6 +29,7 @@
     "@types/express": "^5.0.6",
     "@types/supertest": "^7.2.1",
     "@types/uuid": "^10.0.0",
+    "@vitest/coverage-v8": "^5.1.0",
     "prisma": "^7.10.1",
     "supertest": "^7.3.1",
     "tsx": "^4.23.15",
