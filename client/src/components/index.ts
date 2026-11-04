@@ -1,3 +1,4 @@
+export { AnnotationCard } from './AnnotationCard';
 export { StyledButton, StyledCancelButton, StyledActionButton, StyledDeleteButton } from './Button';
 export { StyledCard, StyledClickableCard } from './Card';
 export { StyledEmptyState, StyledEmptyStateCard } from './EmptyState';
