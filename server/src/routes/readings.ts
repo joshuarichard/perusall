@@ -1,5 +1,6 @@
 import { Router, type Request, type Response } from 'express';
 import { prisma } from '../data';
+import { Errors } from '../types';
 import type { ApiError, CreateReadingBody } from '../types';
 
 export const readingsRouter = Router();
@@ -28,7 +29,7 @@ readingsRouter.get('/:id', async (req: Request<{ id: string }>, res: Response) =
   });
 
   if (!reading) {
-    res.status(404).json({ error: 'Reading not found' });
+    res.status(404).json({ error: Errors.READING_NOT_FOUND });
     return;
   }
 
@@ -51,7 +52,7 @@ readingsRouter.post('/', async (req: Request<{}, unknown, CreateReadingBody>, re
   const { title, description, createdBy } = req.body;
 
   if (!title?.trim() || !description?.trim()) {
-    res.status(400).json({ error: 'Title and description are required' });
+    res.status(400).json({ error: Errors.TITLE_AND_DESCRIPTION_REQUIRED });
     return;
   }
 
@@ -76,7 +77,7 @@ readingsRouter.get('/:id/stats', async (req: Request<{ id: string }>, res: Respo
   });
 
   if (!reading) {
-    res.status(404).json({ error: 'Reading not found' });
+    res.status(404).json({ error: Errors.READING_NOT_FOUND });
     return;
   }
 

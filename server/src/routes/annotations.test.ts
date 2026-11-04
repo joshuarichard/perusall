@@ -2,6 +2,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import request from 'supertest';
 import { app } from '../app';
 import { prisma } from '../data';
+import { Errors } from '../types';
 
 vi.mock('../data', () => ({
   prisma: {
@@ -52,7 +53,7 @@ describe('POST /api/annotations', () => {
       .send({ content: '', readingId: 'r1', authorId: 'stu-1' });
 
     expect(res.status).toBe(400);
-    expect(res.body).toEqual({ error: 'Annotation content cannot be empty' });
+    expect(res.body).toEqual({ error: Errors.ANNOTATION_EMPTY });
     expect(prisma.annotation.create).not.toHaveBeenCalled();
   });
 
@@ -62,7 +63,7 @@ describe('POST /api/annotations', () => {
       .send({ content: '   ', readingId: 'r1', authorId: 'stu-1' });
 
     expect(res.status).toBe(400);
-    expect(res.body).toEqual({ error: 'Annotation content cannot be empty' });
+    expect(res.body).toEqual({ error: Errors.ANNOTATION_EMPTY });
   });
 
   it('rejects missing readingId with 400', async () => {
@@ -71,7 +72,7 @@ describe('POST /api/annotations', () => {
       .send({ content: 'Hello', authorId: 'stu-1' });
 
     expect(res.status).toBe(400);
-    expect(res.body).toEqual({ error: 'readingId and authorId are required' });
+    expect(res.body).toEqual({ error: Errors.READING_AND_AUTHOR_REQUIRED });
   });
 
   it('rejects missing authorId with 400', async () => {
@@ -80,7 +81,7 @@ describe('POST /api/annotations', () => {
       .send({ content: 'Hello', readingId: 'r1' });
 
     expect(res.status).toBe(400);
-    expect(res.body).toEqual({ error: 'readingId and authorId are required' });
+    expect(res.body).toEqual({ error: Errors.READING_AND_AUTHOR_REQUIRED });
   });
 
   it('trims whitespace from content', async () => {
@@ -132,7 +133,7 @@ describe('POST /api/annotations', () => {
       .send({ content: 'Reply', readingId: 'r1', authorId: 'stu-1', parentId: 'missing' });
 
     expect(res.status).toBe(404);
-    expect(res.body).toEqual({ error: 'Parent annotation not found' });
+    expect(res.body).toEqual({ error: Errors.PARENT_NOT_FOUND });
     expect(prisma.annotation.create).not.toHaveBeenCalled();
   });
 
@@ -145,7 +146,7 @@ describe('POST /api/annotations', () => {
       .send({ content: 'Reply', readingId: 'r2', authorId: 'stu-1', parentId: 'a1' });
 
     expect(res.status).toBe(400);
-    expect(res.body).toEqual({ error: 'Reply must be on the same reading as the parent' });
+    expect(res.body).toEqual({ error: Errors.REPLY_WRONG_READING });
     expect(prisma.annotation.create).not.toHaveBeenCalled();
   });
 });
@@ -181,7 +182,7 @@ describe('PATCH /api/annotations/:id', () => {
       .send({ content: '', authorId: 'stu-1' });
 
     expect(res.status).toBe(400);
-    expect(res.body).toEqual({ error: 'Annotation content cannot be empty' });
+    expect(res.body).toEqual({ error: Errors.ANNOTATION_EMPTY });
   });
 
   it('returns 404 for nonexistent annotation', async () => {
@@ -192,7 +193,7 @@ describe('PATCH /api/annotations/:id', () => {
       .send({ content: 'Updated', authorId: 'stu-1' });
 
     expect(res.status).toBe(404);
-    expect(res.body).toEqual({ error: 'Annotation not found' });
+    expect(res.body).toEqual({ error: Errors.ANNOTATION_NOT_FOUND });
   });
 
   it('rejects edit by non-author with 403', async () => {
@@ -203,7 +204,7 @@ describe('PATCH /api/annotations/:id', () => {
       .send({ content: 'Hacked', authorId: 'stu-2' });
 
     expect(res.status).toBe(403);
-    expect(res.body).toEqual({ error: 'You can only edit your own annotations' });
+    expect(res.body).toEqual({ error: Errors.EDIT_OWN_ONLY });
     expect(prisma.annotation.update).not.toHaveBeenCalled();
   });
 
@@ -245,7 +246,7 @@ describe('DELETE /api/annotations/:id', () => {
     const res = await request(app).delete('/api/annotations/missing').send({ authorId: 'stu-1' });
 
     expect(res.status).toBe(404);
-    expect(res.body).toEqual({ error: 'Annotation not found' });
+    expect(res.body).toEqual({ error: Errors.ANNOTATION_NOT_FOUND });
   });
 
   it('rejects delete by non-author with 403', async () => {
@@ -254,7 +255,7 @@ describe('DELETE /api/annotations/:id', () => {
     const res = await request(app).delete('/api/annotations/a1').send({ authorId: 'stu-2' });
 
     expect(res.status).toBe(403);
-    expect(res.body).toEqual({ error: 'You can only delete your own annotations' });
+    expect(res.body).toEqual({ error: Errors.DELETE_OWN_ONLY });
     expect(prisma.annotation.delete).not.toHaveBeenCalled();
   });
 });

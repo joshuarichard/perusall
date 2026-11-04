@@ -2,6 +2,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import request from 'supertest';
 import { app } from '../app';
 import { prisma } from '../data';
+import { Errors } from '../types';
 
 vi.mock('../data', () => ({
   prisma: {
@@ -104,7 +105,7 @@ describe('GET /api/readings/:id', () => {
     const res = await request(app).get('/api/readings/nonexistent');
 
     expect(res.status).toBe(404);
-    expect(res.body).toEqual({ error: 'Reading not found' });
+    expect(res.body).toEqual({ error: Errors.READING_NOT_FOUND });
   });
 
   it('builds nested reply tree from flat annotations', async () => {
@@ -192,7 +193,7 @@ describe('POST /api/readings', () => {
       .send({ title: '', description: 'Desc', createdBy: 'inst-1' });
 
     expect(res.status).toBe(400);
-    expect(res.body).toEqual({ error: 'Title and description are required' });
+    expect(res.body).toEqual({ error: Errors.TITLE_AND_DESCRIPTION_REQUIRED });
     expect(prisma.reading.create).not.toHaveBeenCalled();
   });
 
@@ -202,7 +203,7 @@ describe('POST /api/readings', () => {
       .send({ title: 'Title', description: '   ', createdBy: 'inst-1' });
 
     expect(res.status).toBe(400);
-    expect(res.body).toEqual({ error: 'Title and description are required' });
+    expect(res.body).toEqual({ error: Errors.TITLE_AND_DESCRIPTION_REQUIRED });
     expect(prisma.reading.create).not.toHaveBeenCalled();
   });
 
@@ -210,7 +211,7 @@ describe('POST /api/readings', () => {
     const res = await request(app).post('/api/readings').send({});
 
     expect(res.status).toBe(400);
-    expect(res.body).toEqual({ error: 'Title and description are required' });
+    expect(res.body).toEqual({ error: Errors.TITLE_AND_DESCRIPTION_REQUIRED });
   });
 
   it('trims whitespace from title and description', async () => {
@@ -256,7 +257,7 @@ describe('GET /api/readings/:id/stats', () => {
     const res = await request(app).get('/api/readings/nonexistent/stats');
 
     expect(res.status).toBe(404);
-    expect(res.body).toEqual({ error: 'Reading not found' });
+    expect(res.body).toEqual({ error: Errors.READING_NOT_FOUND });
   });
 
   it('returns zero counts for reading with no annotations', async () => {

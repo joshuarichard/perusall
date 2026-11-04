@@ -1,5 +1,6 @@
 import { Router, type Request, type Response } from 'express';
 import { prisma } from '../data';
+import { Errors } from '../types';
 import type { ApiError, CreateAnnotationBody, UpdateAnnotationBody } from '../types';
 
 export const annotationsRouter = Router();
@@ -10,23 +11,23 @@ annotationsRouter.post(
     const { content, readingId, authorId, parentId } = req.body;
 
     if (!content?.trim()) {
-      res.status(400).json({ error: 'Annotation content cannot be empty' });
+      res.status(400).json({ error: Errors.ANNOTATION_EMPTY });
       return;
     }
 
     if (!readingId || !authorId) {
-      res.status(400).json({ error: 'readingId and authorId are required' });
+      res.status(400).json({ error: Errors.READING_AND_AUTHOR_REQUIRED });
       return;
     }
 
     if (parentId) {
       const parent = await prisma.annotation.findUnique({ where: { id: parentId } });
       if (!parent) {
-        res.status(404).json({ error: 'Parent annotation not found' });
+        res.status(404).json({ error: Errors.PARENT_NOT_FOUND });
         return;
       }
       if (parent.readingId !== readingId) {
-        res.status(400).json({ error: 'Reply must be on the same reading as the parent' });
+        res.status(400).json({ error: Errors.REPLY_WRONG_READING });
         return;
       }
     }
@@ -51,7 +52,7 @@ annotationsRouter.patch(
     const { content, authorId } = req.body;
 
     if (!content?.trim()) {
-      res.status(400).json({ error: 'Annotation content cannot be empty' });
+      res.status(400).json({ error: Errors.ANNOTATION_EMPTY });
       return;
     }
 
@@ -60,12 +61,12 @@ annotationsRouter.patch(
     });
 
     if (!existing) {
-      res.status(404).json({ error: 'Annotation not found' });
+      res.status(404).json({ error: Errors.ANNOTATION_NOT_FOUND });
       return;
     }
 
     if (existing.authorId !== authorId) {
-      res.status(403).json({ error: 'You can only edit your own annotations' });
+      res.status(403).json({ error: Errors.EDIT_OWN_ONLY });
       return;
     }
 
@@ -92,12 +93,12 @@ annotationsRouter.delete(
     });
 
     if (!existing) {
-      res.status(404).json({ error: 'Annotation not found' });
+      res.status(404).json({ error: Errors.ANNOTATION_NOT_FOUND });
       return;
     }
 
     if (existing.authorId !== authorId) {
-      res.status(403).json({ error: 'You can only delete your own annotations' });
+      res.status(403).json({ error: Errors.DELETE_OWN_ONLY });
       return;
     }
 

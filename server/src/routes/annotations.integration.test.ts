@@ -2,6 +2,7 @@ import { vi, describe, it, expect, beforeAll, afterAll, beforeEach } from 'vites
 import supertest from 'supertest';
 import type { PrismaClient } from '@prisma/client';
 import { createTestPrisma, cleanDatabase, removeTestDb } from '../test/integration-helper';
+import { Errors } from '../types';
 
 let prisma: PrismaClient;
 let dbPath: string;
@@ -97,7 +98,7 @@ describe('POST /api/annotations', () => {
     });
 
     expect(res.status).toBe(400);
-    expect(res.body.error).toBe('Annotation content cannot be empty');
+    expect(res.body.error).toBe(Errors.ANNOTATION_EMPTY);
   });
 
   it('rejects whitespace-only content', async () => {
@@ -121,7 +122,7 @@ describe('POST /api/annotations', () => {
     });
 
     expect(res.status).toBe(400);
-    expect(res.body.error).toBe('readingId and authorId are required');
+    expect(res.body.error).toBe(Errors.READING_AND_AUTHOR_REQUIRED);
   });
 
   it('rejects missing authorId', async () => {
@@ -186,7 +187,7 @@ describe('POST /api/annotations (replies)', () => {
     });
 
     expect(res.status).toBe(404);
-    expect(res.body.error).toBe('Parent annotation not found');
+    expect(res.body.error).toBe(Errors.PARENT_NOT_FOUND);
   });
 
   it('rejects reply on a different reading than the parent', async () => {
@@ -203,7 +204,7 @@ describe('POST /api/annotations (replies)', () => {
     });
 
     expect(res.status).toBe(400);
-    expect(res.body.error).toBe('Reply must be on the same reading as the parent');
+    expect(res.body.error).toBe(Errors.REPLY_WRONG_READING);
   });
 
   it('replies appear in the reading detail tree', async () => {
@@ -256,7 +257,7 @@ describe('PATCH /api/annotations/:id', () => {
     });
 
     expect(res.status).toBe(403);
-    expect(res.body.error).toBe('You can only edit your own annotations');
+    expect(res.body.error).toBe(Errors.EDIT_OWN_ONLY);
   });
 
   it('returns 404 for nonexistent annotation', async () => {

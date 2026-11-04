@@ -2,6 +2,7 @@ import { vi, describe, it, expect, beforeAll, afterAll, beforeEach } from 'vites
 import supertest from 'supertest';
 import type { PrismaClient } from '@prisma/client';
 import { createTestPrisma, cleanDatabase, removeTestDb } from '../test/integration-helper';
+import { Errors } from '../types';
 
 let prisma: PrismaClient;
 let dbPath: string;
@@ -94,7 +95,7 @@ describe('GET /api/readings/:id', () => {
   it('returns 404 for nonexistent reading', async () => {
     const res = await request.get('/api/readings/nonexistent');
     expect(res.status).toBe(404);
-    expect(res.body.error).toBe('Reading not found');
+    expect(res.body.error).toBe(Errors.READING_NOT_FOUND);
   });
 
   it('returns reading with annotations as a tree', async () => {
@@ -234,7 +235,7 @@ describe('POST /api/readings', () => {
     });
 
     expect(res.status).toBe(400);
-    expect(res.body.error).toBe('Title and description are required');
+    expect(res.body.error).toBe(Errors.TITLE_AND_DESCRIPTION_REQUIRED);
   });
 
   it('rejects empty description', async () => {
