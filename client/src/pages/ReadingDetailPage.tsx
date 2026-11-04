@@ -15,10 +15,10 @@ import {
   StyledCancelButton,
   StyledActionButton,
   StyledDeleteButton,
-} from '../components/Button';
-import { StyledErrorMessage } from '../components/FormElements';
-import { StyledEmptyStateCard } from '../components/EmptyState';
-import { StyledCard } from '../components/Card';
+  StyledErrorMessage,
+  StyledEmptyStateCard,
+  StyledCard,
+} from '../components';
 
 const StyledBackLink = styled(Link)`
   display: inline-block;

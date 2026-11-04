@@ -1,6 +1,6 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { useAppSelector } from './app/hooks';
-import { Layout } from './components/Layout';
+import { Layout } from './components';
 import LoginPage from './pages/LoginPage';
 import ReadingsPage from './pages/ReadingsPage';
 import ReadingDetailPage from './pages/ReadingDetailPage';

@@ -3,16 +3,19 @@ import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
 import { useAppSelector } from '../app/hooks';
 import { useGetReadingsQuery, useCreateReadingMutation } from '../app/api';
-import { StyledButton, StyledCancelButton } from '../components/Button';
 import {
+  StyledButton,
+  StyledCancelButton,
   StyledInput,
   StyledTextarea,
   StyledFormActions,
   StyledErrorMessage,
-} from '../components/FormElements';
-import { StyledEmptyState } from '../components/EmptyState';
-import { StyledClickableCard } from '../components/Card';
-import { StyledPageHeader, StyledPageTitle, StyledSuccessMessage } from '../components/PageHeader';
+  StyledEmptyState,
+  StyledClickableCard,
+  StyledPageHeader,
+  StyledPageTitle,
+  StyledSuccessMessage,
+} from '../components';
 
 const StyledReadingTitle = styled.h2`
   font-size: ${({ theme }) => theme.fontSize.lg};

@@ -2,7 +2,7 @@ import styled from 'styled-components';
 import { useAppSelector, useAppDispatch } from '../app/hooks';
 import { logout } from '../features/auth/authSlice';
 import { useNavigate, Link } from 'react-router-dom';
-import { useThemeMode } from '../styles/ThemeContext';
+import { useThemeMode } from '../styles';
 
 const StyledHeader = styled.header`
   background: ${({ theme }) => theme.colors.surface};
