@@ -8,8 +8,8 @@ import {
   useCreateAnnotationMutation,
   useUpdateAnnotationMutation,
   useDeleteAnnotationMutation,
-  type Annotation,
 } from '../app/api';
+import type { Annotation } from '../app/types';
 import {
   StyledButton,
   StyledCancelButton,

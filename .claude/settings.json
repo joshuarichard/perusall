@@ -16,7 +16,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "cd client && npx tsc --noEmit 2>&1; CLIENT=$?; cd ../server && npx tsc --noEmit 2>&1; SERVER=$?; if [ $CLIENT -ne 0 ] || [ $SERVER -ne 0 ]; then echo '{\"decision\":\"block\",\"reason\":\"TypeScript type errors found — fix before finishing\"}'; else echo '{\"systemMessage\":\"Typecheck passed\"}'; fi",
+            "command": "cd /Users/joshuarichard/Code/perusall/client && npx tsc --noEmit 2>&1; CLIENT=$?; cd /Users/joshuarichard/Code/perusall/server && npx tsc --noEmit 2>&1; SERVER=$?; if [ $CLIENT -ne 0 ] || [ $SERVER -ne 0 ]; then echo '{\"decision\":\"block\",\"reason\":\"TypeScript type errors found — fix before finishing\"}'; else echo '{\"systemMessage\":\"Typecheck passed\"}'; fi",
             "timeout": 30,
             "statusMessage": "Running typecheck..."
           }

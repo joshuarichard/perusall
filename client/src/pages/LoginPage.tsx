@@ -1,6 +1,7 @@
 import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
-import { useGetUsersQuery, type User } from '../app/api';
+import { useGetUsersQuery } from '../app/api';
+import type { User } from '../app/types';
 import { useAppDispatch } from '../app/hooks';
 import { setCurrentUser } from '../features/auth/authSlice';
 

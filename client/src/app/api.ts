@@ -1,53 +1,7 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
+import type { User, Reading, ReadingDetail, Annotation, ReadingStats } from './types';
 
-// RTK Query replaces hand-written fetch calls, loading states, and cache logic.
-// Each endpoint generates a React hook (e.g., useGetReadingsQuery).
-// Tags enable automatic cache invalidation: creating an annotation
-// invalidates the reading detail cache so it refetches fresh data.
-
-export interface User {
-  id: string;
-  name: string;
-  role: 'instructor' | 'student';
-  createdAt: string;
-}
-
-export interface Reading {
-  id: string;
-  title: string;
-  description: string;
-  createdBy: string;
-  createdAt: string;
-  creator: User;
-  _count: { annotations: number };
-}
-
-export interface ReadingDetail {
-  id: string;
-  title: string;
-  description: string;
-  createdBy: string;
-  createdAt: string;
-  creator: User;
-  annotations: Annotation[];
-}
-
-export interface Annotation {
-  id: string;
-  content: string;
-  readingId: string;
-  authorId: string;
-  parentId: string | null;
-  createdAt: string;
-  author: User;
-  replies?: Annotation[];
-}
-
-export interface ReadingStats {
-  readingId: string;
-  annotationCount: number;
-  uniqueStudents: number;
-}
+export type { User, Reading, ReadingDetail, Annotation, ReadingStats } from './types';
 
 export const api = createApi({
   baseQuery: fetchBaseQuery({ baseUrl: '/api' }),
