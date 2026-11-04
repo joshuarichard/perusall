@@ -24,17 +24,19 @@ npm run test:e2e         # Playwright E2E tests
 
 ```
 perusall/
+├── shared/
+│   └── types.ts          # Shared wire types (User, Reading, Annotation, etc.)
 ├── client/src/
-│   ├── app/              # Redux store + RTK Query API (api.ts, hooks.ts)
-│   ├── components/       # Reusable UI (Layout)
+│   ├── app/              # Redux store + RTK Query API (api.ts, hooks.ts, types.ts)
+│   ├── components/       # Reusable UI primitives (barrel: index.ts)
 │   ├── features/auth/    # Auth slice (user selection, no real auth)
 │   ├── pages/            # Route-level pages + colocated tests
-│   └── styles/           # Styled Components theme + global styles
+│   └── styles/           # Theme, dark mode, global styles (barrel: index.ts)
 ├── server/src/
 │   ├── data/             # Prisma client + seed script (barrel: index.ts)
 │   ├── routes/           # API handlers + colocated tests (barrel: index.ts)
 │   ├── test/             # Integration test helper (creates temp SQLite DBs)
-│   └── types.ts          # Shared TypeScript interfaces
+│   └── types.ts          # Server-only request body types
 ├── server/prisma/        # Schema + migrations
 ├── e2e/                  # Playwright E2E tests
 └── playwright.config.ts
@@ -47,7 +49,11 @@ perusall/
 - Styled Components use PascalCase with `Styled` prefix (e.g., `StyledCard`)
 - Redux slices follow RTK conventions with `createSlice` and `createApi`
 - API calls go through RTK Query — no raw fetch/axios in components
-- Barrel files (`index.ts`) for `data/` and `routes/` directories
+- Barrel files (`index.ts`) for `components/`, `styles/`, `data/`, and `routes/`
+- No `app/` barrel — conflicts with `App.tsx` on case-insensitive filesystems
+- `type` aliases over `interface` for all type definitions
+- Shared wire types live in `shared/types.ts`; client re-exports via `@shared` alias
+- Dark mode via `ThemeContext` with localStorage persistence + `prefers-color-scheme` fallback
 - Extensionless local imports (no `.js` suffixes)
 - Comments explain _why_, not _what_
 - Error boundaries at route level

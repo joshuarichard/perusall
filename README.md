@@ -2,7 +2,7 @@
 
 A full-stack collaborative reading application where instructors assign readings and students discuss them through threaded annotations.
 
-Built with TypeScript, React, Redux Toolkit, Styled Components, Vite, Express, Prisma, and SQLite.
+Built with TypeScript, React, Redux Toolkit, Styled Components (with dark mode), Vite, Express, Prisma, and SQLite.
 
 ## Quick Start
 
@@ -70,10 +70,12 @@ npm run db:reset
 ### UX Details
 
 - Role-based UI — select identity to simulate login
+- Dark mode with system preference detection and manual toggle (persisted in localStorage)
 - Empty state handling for readings, annotations, and search
 - Success/error notifications
 - Annotations displayed in reverse chronological order with nested reply threads
 - Form validation prevents empty submissions
+- Shared UI primitives (buttons, cards, forms, empty states) across all pages
 
 ## Architecture
 
@@ -85,6 +87,7 @@ npm run db:reset
 | **UI Framework** | React 18 + TypeScript     | Type safety, component model, ecosystem                                   |
 | **State**        | Redux Toolkit + RTK Query | Eliminates Redux boilerplate, built-in API caching and cache invalidation |
 | **Styling**      | Styled Components         | Scoped CSS-in-JS, theming support, dynamic styles via props               |
+| **Types**        | Shared `shared/types.ts`  | Single source of truth for API wire types across client and server        |
 | **Server**       | Express + TypeScript      | Lightweight, familiar, same language as frontend                          |
 | **Database**     | SQLite via Prisma 7       | Zero-config, file-based, type-safe queries, driver adapter pattern        |
 
