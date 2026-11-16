@@ -1,7 +1,7 @@
 import { Router, type Request, type Response } from 'express';
 import { prisma } from '../data';
 import { Errors, CreateReadingSchema, DeleteReadingSchema } from '../types';
-import type { ApiError, CreateReadingBody, DeleteReadingBody } from '../types';
+import type { CreateReadingBody, DeleteReadingBody, AnnotationNode } from '../types';
 import { validate } from '../middleware/validate';
 
 export const readingsRouter = Router();
@@ -35,8 +35,10 @@ readingsRouter.get('/:id', async (req: Request<{ id: string }>, res: Response) =
   }
 
   // Build tree from flat list to support unlimited nesting depth
-  const byId = new Map(reading.annotations.map((a) => [a.id, { ...a, replies: [] as any[] }]));
-  const roots: any[] = [];
+  const byId = new Map(
+    reading.annotations.map((a) => [a.id, { ...a, replies: [] as AnnotationNode[] }]),
+  );
+  const roots: AnnotationNode[] = [];
   for (const node of byId.values()) {
     if (node.parentId && byId.has(node.parentId)) {
       byId.get(node.parentId)!.replies.push(node);

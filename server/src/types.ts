@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import type { Annotation as PrismaAnnotation, User as PrismaUser } from '@prisma/client';
 
 export interface ApiError {
   error: string;
@@ -46,6 +47,11 @@ export const CreateAnnotationSchema = UpdateAnnotationSchema.extend({
 export const DeleteAnnotationSchema = z.object({
   authorId: z.string().min(1),
 });
+
+export interface AnnotationNode extends PrismaAnnotation {
+  author: PrismaUser;
+  replies: AnnotationNode[];
+}
 
 export type CreateReadingBody = z.infer<typeof CreateReadingSchema>;
 export type DeleteReadingBody = z.infer<typeof DeleteReadingSchema>;
