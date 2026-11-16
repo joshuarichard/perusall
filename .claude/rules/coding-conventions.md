@@ -37,6 +37,15 @@ globs: **/*.{ts,tsx}
 - Button backgrounds use `buttonPrimary`/`buttonPrimaryHover` tokens (separate from `primary` for dark mode contrast)
 - Prefer extending shared styled components via `styled(BaseComponent)` over duplicating CSS
 
+## Import Order
+
+- Enforced automatically by `@trivago/prettier-plugin-sort-imports` via `.prettierrc`
+- Three groups separated by blank lines, alphabetized within each:
+  1. Third-party packages (`react`, `express`, `styled-components`, `@reduxjs/toolkit`, `@prisma/client`, etc.)
+  2. Aliased paths (`@shared/`, `@app/`)
+  3. Local references (`./`, `../`)
+- Specifiers within an import statement are also sorted alphabetically
+
 ## File Organization
 
 - Barrel files (`index.ts`) for `components/`, `styles/`, `data/`, and `routes/`
