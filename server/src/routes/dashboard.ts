@@ -1,6 +1,7 @@
-import { Router, type Request, type Response } from 'express';
-import { prisma } from '../data';
+import { type Request, type Response, Router } from 'express';
+
 import type { DashboardData } from '../../../shared/types';
+import { prisma } from '../data';
 
 export const dashboardRouter = Router();
 

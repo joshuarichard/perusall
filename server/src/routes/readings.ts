@@ -1,8 +1,9 @@
-import { Router, type Request, type Response } from 'express';
+import { type Request, type Response, Router } from 'express';
+
 import { prisma } from '../data';
-import { Errors, CreateReadingSchema, DeleteReadingSchema } from '../types';
-import type { CreateReadingBody, DeleteReadingBody, AnnotationNode } from '../types';
 import { validate } from '../middleware/validate';
+import { CreateReadingSchema, DeleteReadingSchema, Errors } from '../types';
+import type { AnnotationNode, CreateReadingBody, DeleteReadingBody } from '../types';
 
 export const readingsRouter = Router();
 

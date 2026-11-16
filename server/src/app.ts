@@ -1,5 +1,6 @@
 import cors from 'cors';
 import express from 'express';
+
 import { annotationsRouter, dashboardRouter, readingsRouter, usersRouter } from './routes';
 
 export const app = express();

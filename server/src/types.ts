@@ -1,5 +1,5 @@
-import { z } from 'zod';
 import type { Annotation as PrismaAnnotation, User as PrismaUser } from '@prisma/client';
+import { z } from 'zod';
 
 export interface ApiError {
   error: string;

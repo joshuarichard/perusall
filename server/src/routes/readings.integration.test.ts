@@ -1,7 +1,8 @@
-import { vi, describe, it, expect, beforeAll, afterAll, beforeEach } from 'vitest';
-import supertest from 'supertest';
 import type { PrismaClient } from '@prisma/client';
-import { createTestPrisma, cleanDatabase, removeTestDb } from '../test/integration-helper';
+import supertest from 'supertest';
+import { afterAll, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
+
+import { cleanDatabase, createTestPrisma, removeTestDb } from '../test/integration-helper';
 import { Errors } from '../types';
 
 let prisma: PrismaClient;

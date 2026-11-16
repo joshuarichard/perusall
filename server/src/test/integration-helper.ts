@@ -1,8 +1,8 @@
-import path from 'node:path';
-import os from 'node:os';
+import type { PrismaClient } from '@prisma/client';
 import fs from 'node:fs';
 import { createRequire } from 'node:module';
-import type { PrismaClient } from '@prisma/client';
+import os from 'node:os';
+import path from 'node:path';
 
 const require = createRequire(import.meta.url);
 const Database = require('better-sqlite3');

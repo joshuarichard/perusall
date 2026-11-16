@@ -1,18 +1,19 @@
-import { Router, type Request, type Response } from 'express';
+import { type Request, type Response, Router } from 'express';
+
 import { prisma } from '../data';
+import { validate } from '../middleware/validate';
 import {
-  Errors,
   CreateAnnotationSchema,
-  UpdateAnnotationSchema,
   DeleteAnnotationSchema,
+  Errors,
+  UpdateAnnotationSchema,
 } from '../types';
 import type {
   ApiError,
   CreateAnnotationBody,
-  UpdateAnnotationBody,
   DeleteAnnotationBody,
+  UpdateAnnotationBody,
 } from '../types';
-import { validate } from '../middleware/validate';
 
 export const annotationsRouter = Router();
 
