@@ -9,15 +9,6 @@ import type {
   User,
 } from './types';
 
-export type {
-  User,
-  Reading,
-  ReadingDetail,
-  Annotation,
-  ReadingStats,
-  DashboardData,
-} from './types';
-
 export const api = createApi({
   baseQuery: fetchBaseQuery({ baseUrl: '/api' }),
   tagTypes: ['Reading', 'ReadingDetail'],
