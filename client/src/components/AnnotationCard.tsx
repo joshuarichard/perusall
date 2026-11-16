@@ -1,3 +1,4 @@
+import type { Annotation } from '@shared/types';
 import { useState } from 'react';
 import styled from 'styled-components';
 
@@ -6,7 +7,6 @@ import {
   useDeleteAnnotationMutation,
   useUpdateAnnotationMutation,
 } from '../app/api';
-import type { Annotation } from '../app/types';
 import { useTranslation } from '../i18n';
 import { StyledActionButton, StyledButton, StyledCancelButton, StyledDeleteButton } from './Button';
 import { StyledCard as StyledCardBase } from './Card';

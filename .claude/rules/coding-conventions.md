@@ -11,7 +11,7 @@ globs: **/*.{ts,tsx}
 - Prefer `interface` for object structures/API contracts and `type` for unions/intersections
 - Use `extends` for interface composition (e.g. `interface Reading extends ReadingBase`)
 - Extensionless local imports (no `.js` suffixes)
-- Shared wire types live in `shared/types.ts`; client re-exports via `@shared` alias
+- Shared wire types live in `shared/types.ts`; client imports directly via `@shared/types` alias
 - Enforce type-only imports using `import type { ... }` for clean compilation boundaries
 - Server request body types derived from Zod schemas via `z.infer<>` — don't duplicate as manual interfaces
 

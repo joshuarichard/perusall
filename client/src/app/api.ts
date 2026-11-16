@@ -1,5 +1,4 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
-
 import type {
   Annotation,
   DashboardData,
@@ -7,7 +6,7 @@ import type {
   ReadingDetail,
   ReadingStats,
   User,
-} from './types';
+} from '@shared/types';
 
 export const api = createApi({
   baseQuery: fetchBaseQuery({ baseUrl: '/api' }),

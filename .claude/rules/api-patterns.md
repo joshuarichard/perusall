@@ -8,7 +8,7 @@ globs: server/src/**/*.ts,shared/types.ts,client/src/app/api.ts
 ## Wire Types
 - Defined in `shared/types.ts`, shared by client and server
 - `createdAt` is `string` (not `Date`) because JSON serialization converts Date to ISO string
-- Client re-exports via `@shared` alias through `client/src/app/types.ts`
+- Client imports directly via `@shared/types` alias
 
 ## RTK Query
 - All API endpoints defined in `client/src/app/api.ts`

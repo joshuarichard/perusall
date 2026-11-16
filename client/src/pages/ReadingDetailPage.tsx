@@ -1,3 +1,4 @@
+import type { Annotation } from '@shared/types';
 import { useMemo, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import styled from 'styled-components';
@@ -8,7 +9,6 @@ import {
   useGetReadingStatsQuery,
 } from '../app/api';
 import { useAppSelector } from '../app/hooks';
-import type { Annotation } from '../app/types';
 import {
   AnnotationCard,
   StyledButton,
