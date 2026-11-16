@@ -1,9 +1,10 @@
-import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
+import styled from 'styled-components';
+
 import { useGetUsersQuery } from '../app/api';
-import type { User } from '../app/types';
-import { useAppDispatch } from '../app/hooks';
 import { setCurrentUser } from '../app/authSlice';
+import { useAppDispatch } from '../app/hooks';
+import type { User } from '../app/types';
 import { useTranslation } from '../i18n';
 
 const StyledContainer = styled.div`

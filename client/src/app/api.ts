@@ -1,11 +1,12 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
+
 import type {
-  User,
+  Annotation,
+  DashboardData,
   Reading,
   ReadingDetail,
-  Annotation,
   ReadingStats,
-  DashboardData,
+  User,
 } from './types';
 
 export type {

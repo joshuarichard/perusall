@@ -1,13 +1,14 @@
-import { type ReactElement } from 'react';
-import { render, type RenderOptions } from '@testing-library/react';
-import { Provider } from 'react-redux';
-import { ThemeProvider } from 'styled-components';
-import { MemoryRouter } from 'react-router-dom';
 import { configureStore } from '@reduxjs/toolkit';
-import { theme } from './styles/theme';
-import { I18nProvider } from './i18n';
+import { type RenderOptions, render } from '@testing-library/react';
+import { type ReactElement } from 'react';
+import { Provider } from 'react-redux';
+import { MemoryRouter } from 'react-router-dom';
+import { ThemeProvider } from 'styled-components';
+
 import { api } from './app/api';
 import authReducer from './app/authSlice';
+import { I18nProvider } from './i18n';
+import { theme } from './styles/theme';
 
 interface ExtendedRenderOptions extends Omit<RenderOptions, 'queries'> {
   preloadedState?: Record<string, unknown>;

@@ -1,9 +1,10 @@
 import { useState } from 'react';
-import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
+import styled from 'styled-components';
+
 import { useGetDashboardQuery } from '../app/api';
-import { useTranslation } from '../i18n';
 import { StyledPageHeader, StyledPageTitle } from '../components';
+import { useTranslation } from '../i18n';
 
 const StyledSummaryRow = styled.div`
   display: grid;

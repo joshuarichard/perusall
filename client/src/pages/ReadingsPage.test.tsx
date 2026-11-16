@@ -1,9 +1,10 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import ReadingsPage from './ReadingsPage';
-import { renderWithProviders } from '../test-utils';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+
 import * as apiModule from '../app/api';
+import { renderWithProviders } from '../test-utils';
+import ReadingsPage from './ReadingsPage';
 
 vi.mock('../app/api', async () => {
   const actual = await vi.importActual('../app/api');

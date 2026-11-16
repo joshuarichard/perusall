@@ -1,6 +1,7 @@
-import { createContext, useContext, useState, useCallback, type ReactNode } from 'react';
+import { type ReactNode, createContext, useCallback, useContext, useState } from 'react';
 import { ThemeProvider as SCThemeProvider } from 'styled-components';
-import { lightTheme, darkTheme } from './theme';
+
+import { darkTheme, lightTheme } from './theme';
 
 type ThemeMode = 'light' | 'dark';
 

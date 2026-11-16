@@ -1,10 +1,11 @@
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
+
 import { useAppSelector } from './app/hooks';
 import { Layout } from './components';
-import LoginPage from './pages/LoginPage';
-import ReadingsPage from './pages/ReadingsPage';
-import ReadingDetailPage from './pages/ReadingDetailPage';
 import DashboardPage from './pages/DashboardPage';
+import LoginPage from './pages/LoginPage';
+import ReadingDetailPage from './pages/ReadingDetailPage';
+import ReadingsPage from './pages/ReadingsPage';
 
 function RequireAuth({ children }: { children: React.ReactNode }) {
   const currentUser = useAppSelector((state) => state.auth.currentUser);

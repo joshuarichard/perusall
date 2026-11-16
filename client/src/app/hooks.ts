@@ -1,5 +1,6 @@
 import { useDispatch, useSelector } from 'react-redux';
-import type { RootState, AppDispatch } from './store';
+
+import type { AppDispatch, RootState } from './store';
 
 // Pre-typed hooks so components don't need to import RootState/AppDispatch everywhere.
 export const useAppDispatch = useDispatch.withTypes<AppDispatch>();

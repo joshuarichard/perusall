@@ -1,10 +1,11 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { Routes, Route } from 'react-router-dom';
-import ReadingDetailPage from './ReadingDetailPage';
-import { renderWithProviders } from '../test-utils';
+import { Route, Routes } from 'react-router-dom';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+
 import * as apiModule from '../app/api';
+import { renderWithProviders } from '../test-utils';
+import ReadingDetailPage from './ReadingDetailPage';
 
 vi.mock('../app/api', async () => {
   const actual = await vi.importActual('../app/api');

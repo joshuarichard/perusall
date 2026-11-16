@@ -1,10 +1,11 @@
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { Provider } from 'react-redux';
-import { store } from './app/store';
-import { ThemeProvider, GlobalStyle } from './styles';
-import { I18nProvider } from './i18n';
+
 import { App } from './App';
+import { store } from './app/store';
+import { I18nProvider } from './i18n';
+import { GlobalStyle, ThemeProvider } from './styles';
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>

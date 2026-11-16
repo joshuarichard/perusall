@@ -1,27 +1,28 @@
 import { useMemo, useState } from 'react';
-import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
-import { useAppSelector } from '../app/hooks';
+import styled from 'styled-components';
+
 import {
-  useGetReadingsQuery,
   useCreateReadingMutation,
   useDeleteReadingMutation,
+  useGetReadingsQuery,
 } from '../app/api';
-import { useTranslation } from '../i18n';
+import { useAppSelector } from '../app/hooks';
 import {
   StyledButton,
   StyledCancelButton,
-  StyledDeleteButton,
-  StyledInput,
-  StyledTextarea,
-  StyledFormActions,
-  StyledErrorMessage,
-  StyledEmptyState,
   StyledClickableCard,
+  StyledDeleteButton,
+  StyledEmptyState,
+  StyledErrorMessage,
+  StyledFormActions,
+  StyledInput,
   StyledPageHeader,
   StyledPageTitle,
   StyledSuccessMessage,
+  StyledTextarea,
 } from '../components';
+import { useTranslation } from '../i18n';
 
 const StyledReadingTitle = styled.h2`
   font-size: ${({ theme }) => theme.fontSize.lg};

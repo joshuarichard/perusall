@@ -1,22 +1,23 @@
 import { useMemo, useState } from 'react';
+import { Link, useParams } from 'react-router-dom';
 import styled from 'styled-components';
-import { useParams, Link } from 'react-router-dom';
-import { useAppSelector } from '../app/hooks';
+
 import {
+  useCreateAnnotationMutation,
   useGetReadingQuery,
   useGetReadingStatsQuery,
-  useCreateAnnotationMutation,
 } from '../app/api';
+import { useAppSelector } from '../app/hooks';
 import type { Annotation } from '../app/types';
-import { useTranslation } from '../i18n';
 import {
   AnnotationCard,
   StyledButton,
-  StyledTextarea,
-  StyledErrorMessage,
-  StyledEmptyStateCard,
   StyledCard,
+  StyledEmptyStateCard,
+  StyledErrorMessage,
+  StyledTextarea,
 } from '../components';
+import { useTranslation } from '../i18n';
 
 const StyledBackLink = styled(Link)`
   display: inline-block;

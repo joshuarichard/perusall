@@ -1,15 +1,16 @@
 import { useState } from 'react';
 import styled from 'styled-components';
+
 import {
   useCreateAnnotationMutation,
-  useUpdateAnnotationMutation,
   useDeleteAnnotationMutation,
+  useUpdateAnnotationMutation,
 } from '../app/api';
 import type { Annotation } from '../app/types';
 import { useTranslation } from '../i18n';
-import { StyledButton, StyledCancelButton, StyledActionButton, StyledDeleteButton } from './Button';
+import { StyledActionButton, StyledButton, StyledCancelButton, StyledDeleteButton } from './Button';
 import { StyledCard as StyledCardBase } from './Card';
-import { StyledTextarea, StyledFormActions } from './FormElements';
+import { StyledFormActions, StyledTextarea } from './FormElements';
 
 const StyledAnnotationCard = styled(StyledCardBase)`
   border-radius: ${({ theme }) => theme.borderRadius.md};
