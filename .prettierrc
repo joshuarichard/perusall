@@ -1,5 +1,14 @@
 {
   "printWidth": 100,
   "singleQuote": true,
-  "trailingComma": "all"
+  "trailingComma": "all",
+  "plugins": ["@trivago/prettier-plugin-sort-imports"],
+  "importOrder": [
+    "^[a-z@](?!.*[/]\\.\\.)",
+    "^@shared/",
+    "^@app/",
+    "^\\.\\.?/"
+  ],
+  "importOrderSeparation": true,
+  "importOrderSortSpecifiers": true
 }

@@ -1,9 +1,10 @@
+import { Link, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
-import { useAppSelector, useAppDispatch } from '../app/hooks';
+
 import { logout } from '../app/authSlice';
-import { useNavigate, Link } from 'react-router-dom';
+import { useAppDispatch, useAppSelector } from '../app/hooks';
+import { type Locale, useTranslation } from '../i18n';
 import { useThemeMode } from '../styles';
-import { useTranslation, type Locale } from '../i18n';
 
 const StyledHeader = styled.header`
   background: ${({ theme }) => theme.colors.surface};
